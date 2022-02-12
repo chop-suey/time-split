@@ -1,7 +1,10 @@
 {
-  "name": "svelte-app",
-  "version": "1.0.0",
+  "name": "time-split",
+  "author": "chop-suey",
+  "version": "0.0.1",
+  "license": "AGPL-3.0-only",
   "private": true,
+  "repository": "github:chop-suey/time-split",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
