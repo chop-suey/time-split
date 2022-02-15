@@ -8,6 +8,7 @@ import { timeSplitService } from "../service/time-split-service";
     export let end: Datetime = null;
 
     let editMode = false;
+    let editedTime: string;
 
     $: dateText = split.datetime.getDateText();
     $: timeText = split.datetime.getTimeText();
@@ -25,16 +26,30 @@ import { timeSplitService } from "../service/time-split-service";
     function deleteSplit(ignored: Event): void {
         timeSplitService.deleteSplit(split);
     }
+
+    function editSplit(ignored: Event): void {
+        editMode = true;
+        editedTime = split.datetime.getTimeText();
+    }
+
+    function saveSplit(ignored: Event): void {
+        editMode = false;
+        const [ hour, minute ] = editedTime.split(':');
+        timeSplitService.updateSplit({
+            ...split,
+            datetime: split.datetime.withTime(+hour, +minute)
+        })
+    }
 </script>
 
 <span>
     { dateText }
     {#if editMode}
-        <input type="time" value="{timeText}">: { split.tag } {#if !!duration}&rarr; {duration} h{/if}
-        <button on:click="{ () => editMode = false }">save</button>
+        <input type="time" bind:value="{editedTime}">: { split.tag } {#if !!duration}&rarr; {duration} h{/if}
+        <button on:click="{saveSplit}">save</button>
     {:else }
         {timeText}: { split.tag } {#if !!duration}&rarr; {duration} h{/if}
-        <button on:click="{ () => editMode = true }">edit</button>
+        <button on:click="{editSplit}">edit</button>
     {/if}
     <button on:click="{deleteSplit}">x</button>
 </span>
