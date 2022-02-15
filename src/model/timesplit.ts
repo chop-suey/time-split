@@ -1,5 +1,7 @@
+import type { Datetime } from "./datetime";
+
 export interface Timesplit {
     id: number;
-    datetime: Date;
+    datetime: Datetime;
     tag: string;
 }

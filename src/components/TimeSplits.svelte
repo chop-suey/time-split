@@ -1,17 +1,14 @@
 <script lang="ts">
 import { derived } from "svelte/store";
+import type { Datetime } from "../model/datetime";
 import type { Timesplit } from "../model/timesplit";
 
 import { timeSplitService } from "../service/time-split-service";
 import TimeSplit from "./TimeSplit.svelte";
 
-let timeSplits = [];
-
-timeSplitService.getSplits().subscribe(splits => timeSplits = splits);
-
 const matchedSplits = derived(timeSplitService.getSplits(), matchSplits);
 
-function matchSplits(splits: Timesplit[]): {split: Timesplit, end: Date }[] {
+function matchSplits(splits: Timesplit[]): {split: Timesplit, end: Datetime }[] {
     return splits.reduceRight((acc, split, idx, arr) => {
         const end = idx > 0 
             ? arr[idx - 1].datetime

@@ -1,20 +1,24 @@
 <script lang="ts">
+import type { Datetime } from "../model/datetime";
+
 import type { Timesplit } from "../model/timesplit";
 import { timeSplitService } from "../service/time-split-service";
 
     export let split: Timesplit;
-    export let end: Date = null;
+    export let end: Datetime = null;
 
-    const dateFormat = Intl.DateTimeFormat([], { dateStyle: 'medium', timeStyle: 'short' });
+    let editMode = false;
 
-    $: dateText = dateFormat.format(split.datetime);
+    $: dateText = split.datetime.getDateText();
+    $: timeText = split.datetime.getTimeText();
+
     $: duration = calculateDurationHours(split, end);
 
-    function calculateDurationHours({ datetime: from }: Timesplit, to: Date): string {
+    function calculateDurationHours({ datetime: from }: Timesplit, to: Datetime): string {
         if (!from || !to) {
             return null;
         }
-        const delta = to.getTime() - from.getTime();
+        const delta = to.toDateUtc().getTime() - from.toDateUtc().getTime();
         return (delta / 3_600_000).toFixed(2);
     }
 
@@ -23,5 +27,14 @@ import { timeSplitService } from "../service/time-split-service";
     }
 </script>
 
-<span>{ dateText }: {split.tag} {#if !!duration}&rarr; {duration} h{/if}</span><button on:click="{deleteSplit}">x</button>
-
+<span>
+    { dateText }
+    {#if editMode}
+        <input type="time" value="{timeText}">: { split.tag } {#if !!duration}&rarr; {duration} h{/if}
+        <button on:click="{ () => editMode = false }">save</button>
+    {:else }
+        {timeText}: { split.tag } {#if !!duration}&rarr; {duration} h{/if}
+        <button on:click="{ () => editMode = true }">edit</button>
+    {/if}
+    <button on:click="{deleteSplit}">x</button>
+</span>
