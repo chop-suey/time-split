@@ -3,7 +3,7 @@ import type { Timesplit } from "../model/timesplit";
 
 const LOCAL_STORAGE_KEY = 'time-splits';
 
-let nextId = findNextId();
+let nextId = 0;
 
 const splitsStore: Writable<Timesplit[]> = writable(getTimeSplitsFromStorage());
 
@@ -38,13 +38,15 @@ function getTimeSplitsFromStorage(): Timesplit[] {
 
 function parseStoredValue(value: string): Timesplit[] {
     const parsed = JSON.parse(value);
-    return !Array.isArray(parsed)
-        ? []
-        : parsed.map(split => ({ id: split[0], datetime: new Date(split[1]), tag: split[2] }));
+    const splits = Array.isArray(parsed)
+        ? parsed.map((split, index) => ({ id: index, datetime: new Date(split[0]), tag: split[1] }))
+        : [];
+    nextId = splits.length;
+    return splits;
 }
 
 function storeTimeSplits(splits: Timesplit[]): void {
-    const value = splits.map(split => [split.id, split.datetime.getTime(), split.tag]);
+    const value = splits.map(split => [split.datetime.getTime(), split.tag]);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(value));
 }
 
@@ -55,9 +57,4 @@ function getRecentTagsFromSplits(splits: Timesplit[], n: number): string[] {
         .map(split => split.tag)
         .reduce((tags, curr) => tags.includes(curr) ? tags : [ ...tags, curr ], [])
         .slice(0, n);
-}
-
-function findNextId(): number {
-    return getTimeSplitsFromStorage()
-        .reduce((nextId, split) => split.id > nextId ? split.id + 1 : nextId, 0);
 }
