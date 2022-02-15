@@ -21,6 +21,17 @@ export const timeSplitService = {
         splitsStore.update(splits => splits.filter(split => split.id !== id));
     },
 
+    updateSplit({ id, datetime, tag }: Timesplit): void {
+        splitsStore.update(splits => {
+            const index = splits.findIndex(split => split.id === id);
+            if (index >= 0) {
+                splits[index].datetime = datetime;
+                splits[index].tag = tag;
+            }
+            return splits;
+        });
+    },
+
     getSplits(): Readable<Timesplit[]> {
         return splitsStore;
     },
