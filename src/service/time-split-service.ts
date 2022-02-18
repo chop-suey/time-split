@@ -1,6 +1,6 @@
 import { derived, Readable, Writable, writable } from "svelte/store";
 import { Datetime } from "../model/datetime";
-import type { Timesplit } from "../model/timesplit";
+import { Timesplit } from "../model/timesplit";
 
 const LOCAL_STORAGE_KEY = 'time-splits';
 
@@ -14,24 +14,24 @@ const recentTagsStore = derived(splitsStore, splits => getRecentTagsFromSplits(s
 
 export const timeSplitService = {
     newSplit(tag: string): void {
-        splitsStore.update(splits => [ { id: nextId++, datetime: Datetime.fromDate(new Date()), tag }, ...splits ]);
+        splitsStore.update(splits => [ new Timesplit(nextId++, tag, new Datetime()), ...splits ]);
     },
 
     deleteSplit({ id }: Timesplit): void {
         splitsStore.update(splits => splits.filter(split => split.id !== id));
     },
 
-    updateSplit({ id, datetime, tag }: Timesplit): void {
+    updateSplit(split: Timesplit): void {
         splitsStore.update(splits => {
-            const index = splits.findIndex(split => split.id === id);
+            const index = splits.findIndex(s => s.id === split.id);
             if (index >= 0) {
-                splits[index].datetime = datetime;
-                splits[index].tag = tag;
+                splits[index] = split;
             }
             return splits;
         });
     },
 
+    // TODO splits should be sorted by start datetime even, when a split is edited, or added
     getSplits(): Readable<Timesplit[]> {
         return splitsStore;
     },
@@ -50,22 +50,22 @@ function getTimeSplitsFromStorage(): Timesplit[] {
 
 function parseStoredValue(value: string): Timesplit[] {
     const parsed = JSON.parse(value);
-    const splits = Array.isArray(parsed)
-        ? parsed.map((split, index) => ({ id: index, datetime: Datetime.fromArray(split[0]), tag: split[1] }))
+    const splits = Array.isArray(parsed) 
+        ? parsed.map((split, index) => new Timesplit(index, split[1], Datetime.fromArray(split[0])))
         : [];
     nextId = splits.length;
     return splits;
 }
 
 function storeTimeSplits(splits: Timesplit[]): void {
-    const value = splits.map(split => [split.datetime.asArray(), split.tag]);
+    const value = splits.map(split => [split.start.asArray(), split.tag]);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(value));
 }
 
 
 function getRecentTagsFromSplits(splits: Timesplit[], n: number): string[] {
     return splits
-        .sort((a, b) => b.datetime.toDateUtc().getTime() - a.datetime.toDateUtc().getTime())
+        .sort((a, b) => b.compare(a))
         .map(split => split.tag)
         .reduce((tags, curr) => tags.includes(curr) ? tags : [ ...tags, curr ], [])
         .slice(0, n);

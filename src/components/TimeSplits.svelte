@@ -1,25 +1,29 @@
 <script lang="ts">
 import { derived } from "svelte/store";
-import type { Datetime } from "../model/datetime";
 import type { Timesplit } from "../model/timesplit";
 
 import { timeSplitService } from "../service/time-split-service";
 import TimeSplit from "./TimeSplit.svelte";
 
-const matchedSplits = derived(timeSplitService.getSplits(), matchSplits);
+const splits = derived(timeSplitService.getSplits(), matchAdjacentSplits);
 
-function matchSplits(splits: Timesplit[]): {split: Timesplit, end: Datetime }[] {
-    return splits.reduceRight((acc, split, idx, arr) => {
-        const end = idx > 0 
-            ? arr[idx - 1].datetime
-            : null;
-        return [ { split, end }, ...acc ];
+// TODO move to split service
+function matchAdjacentSplits(splits: Timesplit[]): Timesplit[] {
+    return splits.reduceRight((acc, split, index, arr) => {
+        const next = index > 0 ? arr[index - 1] : null;
+        return [ (!next ? split : split.withEnd(next.start)), ...acc ];
     }, []);
 }
 </script>
 
-<ul>
-    {#each $matchedSplits as { split, end }}
-    <li><TimeSplit split={split} end={end}></TimeSplit></li>
+<style>
+    ul.splits {
+        list-style-type: none;
+    }
+</style>
+
+<ul class="splits">
+    {#each $splits as split}
+    <li><TimeSplit split={split}></TimeSplit></li>
     {/each}
 </ul>
