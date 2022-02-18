@@ -14,7 +14,7 @@ import { timeSplitService } from "../service/time-split-service";
     $: duration = getDurationHours(split);
 
     function getDurationHours(s: Timesplit): string {
-        const duration = s.getDurationMinutes() / 60;
+        const duration = s.getDurationMinutes(true) / 60;
         return duration > 0 ? duration.toFixed(2) : null;
     }
 

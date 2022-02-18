@@ -47,6 +47,10 @@ export class Datetime {
         return Math.abs(difference);
     }
 
+    isSameDay(other?: Datetime): boolean {
+        return this.getDateText() === other?.getDateText();
+    }
+
     compare(other: Datetime): number {
         return !other
             ? 1
