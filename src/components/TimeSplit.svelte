@@ -1,26 +1,21 @@
 <script lang="ts">
-import type { Datetime } from "../model/datetime";
 
 import type { Timesplit } from "../model/timesplit";
 import { timeSplitService } from "../service/time-split-service";
 
     export let split: Timesplit;
-    export let end: Datetime = null;
 
     let editMode = false;
     let editedTime: string;
 
-    $: dateText = split.datetime.getDateText();
-    $: timeText = split.datetime.getTimeText();
+    $: dateText = split.start.getDateText();
+    $: timeText = split.start.getTimeText();
 
-    $: duration = calculateDurationHours(split, end);
+    $: duration = getDurationHours(split);
 
-    function calculateDurationHours({ datetime: from }: Timesplit, to: Datetime): string {
-        if (!from || !to) {
-            return null;
-        }
-        const delta = to.toDateUtc().getTime() - from.toDateUtc().getTime();
-        return (delta / 3_600_000).toFixed(2);
+    function getDurationHours(s: Timesplit): string {
+        const duration = s.getDurationMinutes() / 60;
+        return duration > 0 ? duration.toFixed(2) : null;
     }
 
     function deleteSplit(ignored: Event): void {
@@ -29,16 +24,16 @@ import { timeSplitService } from "../service/time-split-service";
 
     function editSplit(ignored: Event): void {
         editMode = true;
-        editedTime = split.datetime.getTimeText();
+        editedTime = split.start.getTimeText();
     }
 
     function saveSplit(ignored: Event): void {
         editMode = false;
         const [ hour, minute ] = editedTime.split(':');
-        timeSplitService.updateSplit({
-            ...split,
-            datetime: split.datetime.withTime(+hour, +minute)
-        })
+
+        const start = split.start.withTime(+hour, +minute);
+
+        timeSplitService.updateSplit(split.withStart(start));
     }
 </script>
 

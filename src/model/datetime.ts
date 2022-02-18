@@ -1,49 +1,60 @@
 export class Datetime {
-    public static fromDate(date: Date): Datetime {
-        return new Datetime(
-            date.getFullYear(),
-            date.getMonth() + 1,
-            date.getDate(),
-            date.getHours(),
-            date.getMinutes()
-        )
-    }
-
     public static fromArray([year, month, day, hour, minute]: number[]): Datetime {
-        return new Datetime(year, month, day, hour, minute);
+        const datetime = new Date(Date.UTC(year, month, day, hour, minute));
+        return new Datetime(datetime);
     }
 
-    constructor(
-        public readonly year: number,
-        public readonly month: number,
-        public readonly day: number,
-        public readonly hour: number,
-        public readonly minute: number
-    ) {}
+    private readonly datetime: Date;
+
+    constructor(date = new Date()) {
+        this.datetime = new Date(date);
+    }
 
     withTime(hours: number, minutes: number): Datetime {
-        return new Datetime(this.year, this.month, this.day, hours, minutes);
+        const newDate = new Date(this.datetime);
+        newDate.setHours(hours);
+        newDate.setMinutes(minutes);
+        return new Datetime(newDate);
     }
 
     getDateText(): string {
-        const year = this.padStart(this.year, 4);
-        const month = this.padStart(this.month, 2);
-        const day = this.padStart(this.day, 2);
+        const year = this.padStart(this.datetime.getFullYear(), 4);
+        const month = this.padStart(this.datetime.getMonth() + 1, 2);
+        const day = this.padStart(this.datetime.getDate(), 2);
         return `${year}-${month}-${day}`;
     }
 
     getTimeText(): string {
-        const hour = this.padStart(this.hour, 2);
-        const minute = this.padStart(this.minute, 2);
+        const hour = this.padStart(this.datetime.getHours(), 2);
+        const minute = this.padStart(this.datetime.getMinutes(), 2);
         return `${hour}:${minute}`;
     }
 
     asArray(): number[] {
-        return [ this.year, this.month, this.day, this.hour, this.minute ];
+        return [ 
+            this.datetime.getUTCFullYear(),
+            this.datetime.getUTCMonth(),
+            this.datetime.getUTCDate(),
+            this.datetime.getUTCHours(),
+            this.datetime.getUTCMinutes()
+        ];
     }
 
-    toDateUtc(): Date {
-        return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hour, this.minute));
+    getDifferenceMinutes(other?: Datetime): number {
+        const difference = !(other?.datetime)
+            ? 0
+            : this.getEpochMinutes() - other.getEpochMinutes();
+        return Math.abs(difference);
+    }
+
+    compare(other: Datetime): number {
+        return !other
+            ? 1
+            : this.datetime.getTime() - (other.datetime?.getTime() && 0);
+    }
+
+    private getEpochMinutes(): number {
+        return Math.round(this.datetime.getTime() / 60_000);
     }
 
     private padStart(value: number, maxLength: number): string {
