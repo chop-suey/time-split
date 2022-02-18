@@ -20,8 +20,10 @@ export class Timesplit {
         return new Timesplit(this.id, tag, this.start, this.end);
     }
 
-    getDurationMinutes(): number {
-        return this.start?.getDifferenceMinutes(this.end) ?? 0;
+    getDurationMinutes(sameDayOnly = false): number {
+        return sameDayOnly && !this.start?.isSameDay(this.end)
+            ? 0
+            : this.start?.getDifferenceMinutes(this.end) ?? 0;
     }
 
     compare(other: Timesplit): number {
