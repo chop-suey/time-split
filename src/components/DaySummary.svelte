@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { Datetime } from "../model/datetime";
 import type { SplitGroup } from "../model/split-group";
 import type { Timesplit } from "../model/timesplit";
 
@@ -72,7 +71,15 @@ function toggleSummary(ignored: Event): void {
 </style>
 
 <div class="day_summary">
-    <h1 on:click="{toggleSummary}"><span class="chevron">{#if displaySummary}&#9661;{:else}&#9655;{/if}</span>{ group.date.getDateText() }</h1>
+    <h1 on:click="{toggleSummary}">
+        <span class="chevron">
+            {#if displaySummary}
+            <img src="assets/expand_less.svg" alt="Collapse Summary">
+            {:else}
+            <img src="assets/expand_more.svg" alt="Expand Summary">
+            {/if}
+        </span>
+        { group.date.getDateText() }</h1>
     {#if displaySummary}
     <div class="summary">
         <dl>
