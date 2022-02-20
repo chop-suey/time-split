@@ -1,7 +1,6 @@
 export class Datetime {
-    public static fromArray([year, month, day, hour, minute]: number[]): Datetime {
-        const datetime = new Date(Date.UTC(year, month, day, hour, minute));
-        return new Datetime(datetime);
+    public static fromTime(minutes: number): Datetime {
+        return new Datetime(new Date(minutes));
     }
 
     private readonly datetime: Date;
@@ -30,14 +29,8 @@ export class Datetime {
         return `${hour}:${minute}`;
     }
 
-    asArray(): number[] {
-        return [ 
-            this.datetime.getUTCFullYear(),
-            this.datetime.getUTCMonth(),
-            this.datetime.getUTCDate(),
-            this.datetime.getUTCHours(),
-            this.datetime.getUTCMinutes()
-        ];
+    toTime(): number {
+        return this.datetime.getTime();
     }
 
     getDifferenceMinutes(other?: Datetime): number {

@@ -51,14 +51,14 @@ function getTimeSplitsFromStorage(): Timesplit[] {
 function parseStoredValue(value: string): Timesplit[] {
     const parsed = JSON.parse(value);
     const splits = Array.isArray(parsed) 
-        ? parsed.map((split, index) => new Timesplit(index, split[1], Datetime.fromArray(split[0])))
+        ? parsed.map((split, index) => new Timesplit(index, split[1], Datetime.fromTime(split[0])))
         : [];
     nextId = splits.length;
     return splits;
 }
 
 function storeTimeSplits(splits: Timesplit[]): void {
-    const value = splits.map(split => [split.start.asArray(), split.tag]);
+    const value = splits.map(split => [split.start.toTime(), split.tag]);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(value));
 }
 
