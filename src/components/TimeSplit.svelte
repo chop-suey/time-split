@@ -38,7 +38,6 @@ import { timeSplitService } from "../service/time-split-service";
 </script>
 
 <span>
-    { dateText }
     {#if editMode}
         <input type="time" bind:value="{editedTime}">: { split.tag } {#if !!duration}&rarr; {duration} h{/if}
         <button on:click="{saveSplit}">save</button>

@@ -10,7 +10,6 @@ import TimeSplits from "./components/TimeSplits.svelte";
 	<h1>Timesplit</h1>
 	<Splitter></Splitter>
 	<RecentTags></RecentTags>
-	<hr>
 	<TimeSplits></TimeSplits>
 </main>
 
