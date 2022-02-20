@@ -5,6 +5,8 @@ import type { Timesplit } from "../model/timesplit";
 export let datetime: Datetime;
 export let splits: Timesplit[];
 
+let displaySummary = false;
+
 $: entries = summarize(splits);
 
 interface Summary {
@@ -14,31 +16,50 @@ interface Summary {
 
 function summarize(splits: Timesplit[]): Summary[] {
     return splits
-        .reduce((acc, split) => {
-            getOrCreateSummary(split.tag, acc).hours += split.getDurationMinutes(true) / 60;
-            return acc;
-        }, [] as Summary[])
+        .reduce(addToSummary, [])
         .sort((a, b) => a.tag.localeCompare(b.tag));
 }
 
-function getOrCreateSummary(tag: string, summaries: Summary[]): Summary {
-    if (!summaries.find(summary => summary.tag === tag)) {
-        summaries.push({ tag, hours: 0 });
+function addToSummary(summaries: Summary[], split: Timesplit): Summary[] {
+    if (!summaries.find(summary => summary.tag === split.tag)) {
+        summaries.push({ tag: split.tag, hours: 0 });
     }
-    return summaries.find(summary => summary.tag === tag);
+    summaries.find(summary => summary.tag === split.tag).hours += split.getDurationMinutes(true) / 60;
+    return summaries;
+}
+
+function toggleSummary(ignored: Event): void {
+    displaySummary = !displaySummary;
 }
 
 </script>
 
 <style>
     .day_summary {
-        margin: 1em 0;
-
-        border-bottom: 1px solid gray;
+        margin: 0;
+        padding: 0;
+        background-color: #B0BEC5;
+        border-bottom: 1px solid #B0BEC5;
     }
 
     h1 {
-        background-color: gray;
+        margin: 0;
+        padding: 0;
+        
+        cursor: pointer;
+    }
+
+    .chevron {
+        float: left;
+    }
+
+    .summary {
+        background-color: #CFD8DC;
+    }
+
+    dl {
+        margin: 0;
+        padding: 0.5em;
     }
 
     dt {
@@ -51,7 +72,8 @@ function getOrCreateSummary(tag: string, summaries: Summary[]): Summary {
 </style>
 
 <div class="day_summary">
-    <h1>{ datetime.getDateText() }</h1>
+    <h1 on:click="{toggleSummary}"><span class="chevron">{#if displaySummary}&#9661;{:else}&#9655;{/if}</span>{ datetime.getDateText() }</h1>
+    {#if displaySummary}
     <div class="summary">
         <dl>
             {#each entries as entry}
@@ -60,4 +82,5 @@ function getOrCreateSummary(tag: string, summaries: Summary[]): Summary {
             {/each}
         </dl>
     </div>
+    {/if}
 </div>
