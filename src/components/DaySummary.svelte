@@ -1,13 +1,13 @@
 <script lang="ts">
 import type { Datetime } from "../model/datetime";
+import type { SplitGroup } from "../model/split-group";
 import type { Timesplit } from "../model/timesplit";
 
-export let datetime: Datetime;
-export let splits: Timesplit[];
+export let group: SplitGroup;
 
 let displaySummary = false;
 
-$: entries = summarize(splits);
+$: entries = summarize(group.splits);
 
 interface Summary {
     tag: string;
@@ -45,7 +45,7 @@ function toggleSummary(ignored: Event): void {
     h1 {
         margin: 0;
         padding: 0;
-        
+
         cursor: pointer;
     }
 
@@ -72,7 +72,7 @@ function toggleSummary(ignored: Event): void {
 </style>
 
 <div class="day_summary">
-    <h1 on:click="{toggleSummary}"><span class="chevron">{#if displaySummary}&#9661;{:else}&#9655;{/if}</span>{ datetime.getDateText() }</h1>
+    <h1 on:click="{toggleSummary}"><span class="chevron">{#if displaySummary}&#9661;{:else}&#9655;{/if}</span>{ group.date.getDateText() }</h1>
     {#if displaySummary}
     <div class="summary">
         <dl>
