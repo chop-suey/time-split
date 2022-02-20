@@ -1,5 +1,4 @@
 <script lang="ts">
-import { action_destroyer } from "svelte/internal";
 
 import { derived } from "svelte/store";
 import type { Datetime } from "../model/datetime";
@@ -41,11 +40,10 @@ function groupSplitsByDay(splits: Timesplit[]): { date: Datetime, splits: Timesp
 </style>
 
 {#each $groupedSplits as {date, splits}}
-    <DaySummary datetime={date}></DaySummary>
+    <DaySummary datetime={date} splits={splits}></DaySummary>
     <ul class="splits">
         {#each splits as split}
         <li><TimeSplit split={split}></TimeSplit></li>
     {/each}
 </ul>
 {/each}
-
