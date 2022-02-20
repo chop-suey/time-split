@@ -7,8 +7,8 @@ import { timeSplitService } from "../service/time-split-service";
 
     let editMode = false;
     let editedTime: string;
+    let editedTag: string;
 
-    $: dateText = split.start.getDateText();
     $: timeText = split.start.getTimeText();
 
     $: duration = getDurationHours(split);
@@ -23,8 +23,9 @@ import { timeSplitService } from "../service/time-split-service";
     }
 
     function editSplit(ignored: Event): void {
-        editMode = true;
         editedTime = split.start.getTimeText();
+        editedTag = split.tag;
+        editMode = true;
     }
 
     function saveSplit(ignored: Event): void {
@@ -33,17 +34,82 @@ import { timeSplitService } from "../service/time-split-service";
 
         const start = split.start.withTime(+hour, +minute);
 
-        timeSplitService.updateSplit(split.withStart(start));
+        const editedSplit = split
+            .withStart(start)
+            .withTag(editedTag);
+
+        timeSplitService.updateSplit(editedSplit);
     }
 </script>
 
-<span>
-    {#if editMode}
-        <input type="time" bind:value="{editedTime}">: { split.tag } {#if !!duration}&rarr; {duration} h{/if}
-        <button on:click="{saveSplit}">save</button>
-    {:else }
-        {timeText}: { split.tag } {#if !!duration}&rarr; {duration} h{/if}
-        <button on:click="{editSplit}">edit</button>
-    {/if}
-    <button on:click="{deleteSplit}">x</button>
-</span>
+<div id="component">
+    <div id="split">
+        <div id="time">
+            {#if editMode}
+            <form on:submit="{saveSplit}">
+                <input type="time" bind:value="{editedTime}">
+            </form>
+            {:else}
+            { timeText }
+            {/if} 
+        </div>
+        <div id="description">
+            {#if editMode}
+            <form on:submit="{saveSplit}">
+                <input type="text" bind:value="{editedTag}">
+            </form>
+            {:else}
+            { split.tag }{#if !!duration}<span class="duration">({duration} h)</span>{/if}
+            {/if} 
+        </div>
+        <div id="controls">
+            {#if editMode}
+                <button on:click="{saveSplit}"><img src="assets/save.svg" alt="Save"></button>
+            {:else}
+                <button on:click="{editSplit}"><img src="assets/edit.svg" alt="Edit"></button>
+            {/if}
+            <button on:click="{deleteSplit}"><img src="assets/delete.svg" alt="Delete"></button>
+        </div>
+    </div>
+</div>
+
+<style>
+    #component {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #split {
+        width: 480px;
+        display: flex;
+        justify-content: stretch;
+        align-items: center;
+    }
+
+    #split > * {
+        margin: 2px 5px;
+    }
+
+    #time {
+        width: 100px;
+    }
+
+    #description {
+        flex: 1;
+        text-align: left;
+    }
+
+    button {
+        padding: 2px;
+    }
+
+    .duration {
+        float: right;
+    }
+
+    input {
+        margin: 0;
+        width: 100%;
+    }
+</style>

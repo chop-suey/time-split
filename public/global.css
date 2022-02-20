@@ -34,10 +34,10 @@ input, button, select, textarea {
 	font-size: inherit;
 	-webkit-padding: 0.4em 0;
 	padding: 0.4em;
-	margin: 0 0 0.5em 0;
+	margin: 0;
 	box-sizing: border-box;
 	border: 1px solid #ccc;
-	border-radius: 2px;
+	border-radius: 0.4em;
 }
 
 input:disabled {
@@ -45,13 +45,18 @@ input:disabled {
 }
 
 button {
-	color: #333;
-	background-color: #f4f4f4;
-	outline: none;
+	padding: 0.4em 0.6em;
+	margin: 0.4em 0.2em;
+	border-radius: 0.4em;
 }
 
 button:disabled {
 	color: #999;
+}
+
+button.chips {
+	border-color: #aaffaa;
+	background-color: #ddffdd;
 }
 
 button:not(:disabled):active {

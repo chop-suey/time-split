@@ -12,6 +12,18 @@ import { timeSplitService } from "../service/time-split-service";
 <form on:submit="{onSubmit}">
     <input id="tag" type="text" bind:value={tag}>
     <button type="submit">
-        Add
+        <img src="assets/add.svg" alt="Add Split">
     </button>
 </form>
+
+<style>
+    form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    button {
+        padding: 2px;
+    }
+</style>
