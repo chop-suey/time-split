@@ -1,6 +1,9 @@
 <script lang="ts">
-import { timeSplitService } from "../service/time-split-service";
-    let tag = '';
+import { getTimeSplitService } from "../service/service-manager";
+
+const timeSplitService = getTimeSplitService();
+
+let tag = '';
 
     function onSubmit(event: Event): void {
 		event.preventDefault();

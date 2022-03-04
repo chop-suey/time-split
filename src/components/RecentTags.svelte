@@ -1,7 +1,9 @@
 <script lang="ts">
-import { timeSplitService } from "../service/time-split-service";
+import { getTimeSplitService } from "../service/service-manager";
 
 let recentTags = [];
+
+const timeSplitService = getTimeSplitService();
 
 timeSplitService.getRecentTags().subscribe(tags => recentTags = tags);
 </script>
