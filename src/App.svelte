@@ -7,9 +7,9 @@ import Splitter from "./components/Splitter.svelte";
 import TimeSplit from "./components/TimeSplit.svelte";
 import type { SplitGroup } from "./model/split-group";
 import type { Timesplit } from "./model/timesplit";
-import { timeSplitService } from "./service/time-split-service";
+import { getTimeSplitService } from "./service/service-manager";
 
-const splits = derived(timeSplitService.getSplits(), matchAdjacentSplits);
+const splits = derived(getTimeSplitService().getSplits(), matchAdjacentSplits);
 const groupedSplits = derived(splits, groupSplitsByDay);
 
 // TODO move to split service

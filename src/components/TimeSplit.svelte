@@ -1,7 +1,9 @@
 <script lang="ts">
 
 import type { Timesplit } from "../model/timesplit";
-import { timeSplitService } from "../service/time-split-service";
+import { getTimeSplitService } from "../service/service-manager";
+
+const timeSplitService = getTimeSplitService();
 
     export let split: Timesplit;
 
