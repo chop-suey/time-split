@@ -28,17 +28,23 @@ import { timeSplitService } from "../service/time-split-service";
         editMode = true;
     }
 
-    function saveSplit(ignored: Event): void {
+    function saveSplit(event: Event): void {
+        event.preventDefault();
         editMode = false;
-        const [ hour, minute ] = editedTime.split(':');
 
-        const start = split.start.withTime(+hour, +minute);
+        const pattern = /([0-1]?[0-9]|2[0-3])[.:]([0-5][0-9])/;
+        const match = editedTime.match(pattern);
 
-        const editedSplit = split
-            .withStart(start)
-            .withTag(editedTag);
+        if (match.length == 3) {
+            const hours = parseInt(match[1]);
+            const minutes = parseInt(match[2]);
 
-        timeSplitService.updateSplit(editedSplit);
+            const start = split.start.withTime(hours, minutes);
+            const editedSplit = split
+                .withStart(start)
+                .withTag(editedTag);
+            timeSplitService.updateSplit(editedSplit);
+        }
     }
 </script>
 
@@ -47,7 +53,7 @@ import { timeSplitService } from "../service/time-split-service";
         <div id="time">
             {#if editMode}
             <form on:submit="{saveSplit}">
-                <input type="time" bind:value="{editedTime}">
+                <input type="text" pattern="([0-1]?[0-9]|2[0-3])[.:][0-5][0-9]" bind:value="{editedTime}">
             </form>
             {:else}
             { timeText }
@@ -67,8 +73,8 @@ import { timeSplitService } from "../service/time-split-service";
                 <button on:click="{saveSplit}"><img src="assets/save.svg" alt="Save"></button>
             {:else}
                 <button on:click="{editSplit}"><img src="assets/edit.svg" alt="Edit"></button>
+                <button on:click="{deleteSplit}"><img src="assets/delete.svg" alt="Delete"></button>
             {/if}
-            <button on:click="{deleteSplit}"><img src="assets/delete.svg" alt="Delete"></button>
         </div>
     </div>
 </div>
