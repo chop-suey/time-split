@@ -1,6 +1,6 @@
 export class Datetime {
-    public static fromTime(minutes: number): Datetime {
-        return new Datetime(new Date(minutes));
+    public static fromTime(epochMillis: number): Datetime {
+        return new Datetime(new Date(epochMillis));
     }
 
     private readonly datetime: Date;

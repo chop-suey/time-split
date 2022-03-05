@@ -1,5 +1,5 @@
 <script lang="ts">
-
+import { LocalTime } from "../model/local-time";
 import type { Timesplit } from "../model/timesplit";
 import { getTimeSplitService } from "../service/service-manager";
 
@@ -34,14 +34,10 @@ const timeSplitService = getTimeSplitService();
         event.preventDefault();
         editMode = false;
 
-        const pattern = /([0-1]?[0-9]|2[0-3])[.:]([0-5][0-9])/;
-        const match = editedTime.match(pattern);
+        const localTime = LocalTime.parse(editedTime);
 
-        if (match.length == 3) {
-            const hours = parseInt(match[1]);
-            const minutes = parseInt(match[2]);
-
-            const start = split.start.withTime(hours, minutes);
+        if (localTime) {
+            const start = split.start.withTime(localTime.hours, localTime.minutes);
             const editedSplit = split
                 .withStart(start)
                 .withTag(editedTag);
@@ -55,7 +51,7 @@ const timeSplitService = getTimeSplitService();
         <div id="time">
             {#if editMode}
             <form on:submit="{saveSplit}">
-                <input type="text" pattern="([0-1]?[0-9]|2[0-3])[.:][0-5][0-9]" bind:value="{editedTime}">
+                <input type="text" pattern="{LocalTime.pattern}" bind:value="{editedTime}">
             </form>
             {:else}
             { timeText }
