@@ -104,10 +104,6 @@ const timeSplitService = getTimeSplitService();
         text-align: left;
     }
 
-    button {
-        padding: 2px;
-    }
-
     .duration {
         float: right;
     }
