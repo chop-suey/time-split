@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { SplitGroup } from "../model/split-group";
 import type { Timesplit } from "../model/timesplit";
+import WorkingHoursSummary from "./WorkingHoursSummary.svelte";
 
 export let group: SplitGroup;
 
@@ -88,6 +89,7 @@ function toggleSummary(ignored: Event): void {
             <dd>{ entry.hours.toFixed(2) } h</dd>
             {/each}
         </dl>
+        <WorkingHoursSummary splits={group.splits}></WorkingHoursSummary>
     </div>
     {/if}
 </div>

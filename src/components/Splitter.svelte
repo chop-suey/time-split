@@ -18,15 +18,3 @@ let tag = '';
         <img src="assets/add.svg" alt="Add Split">
     </button>
 </form>
-
-<style>
-    form {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    button {
-        padding: 2px;
-    }
-</style>
