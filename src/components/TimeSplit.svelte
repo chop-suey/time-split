@@ -1,4 +1,7 @@
 <script lang="ts">
+import { onMount } from "svelte";
+import { Datetime } from "../model/datetime";
+
 import { LocalTime } from "../model/local-time";
 import type { Timesplit } from "../model/timesplit";
 import { getTimeSplitService } from "../service/service-manager";
@@ -11,13 +14,28 @@ const timeSplitService = getTimeSplitService();
     let editedTime: string;
     let editedTag: string;
 
+    let time = new Datetime();
+
     $: timeText = split.start.getTimeText();
 
     $: duration = getDurationHours(split);
+    $: durationOngoing = getDurationHoursOngoing(split, time);
+
+    onMount(() => {
+        const interval = setInterval(() => time = new Datetime(), 60 * 1000);
+        return () => clearInterval(interval);
+    });
 
     function getDurationHours(s: Timesplit): string {
         const duration = s.getDurationMinutes(true) / 60;
         return duration > 0 ? duration.toFixed(2) : null;
+    }
+
+    function getDurationHoursOngoing(s: Timesplit, time: Datetime) {
+        const duration = !s.end && time.isSameDay(s.start)
+            ? s.start.getDifferenceMinutes(time) / 60
+            : null;
+        return duration?.toFixed(2);
     }
 
     function deleteSplit(ignored: Event): void {
@@ -63,7 +81,12 @@ const timeSplitService = getTimeSplitService();
                 <input type="text" bind:value="{editedTag}">
             </form>
             {:else}
-            { split.tag }{#if !!duration}<span class="duration">({duration} h)</span>{/if}
+                { split.tag }
+                {#if !!duration}
+                    <span class="duration">({duration} h)</span>
+                {:else if !!durationOngoing}
+                    <span class="duration ongoing">({durationOngoing} h)</span>
+                {/if}
             {/if} 
         </div>
         <div id="controls">
@@ -106,6 +129,10 @@ const timeSplitService = getTimeSplitService();
 
     .duration {
         float: right;
+    }
+
+    .duration.ongoing {
+        color: #AAA;
     }
 
     input {
