@@ -1,3 +1,5 @@
+import { padStart } from "../util/format";
+
 export class Datetime {
     public static fromTime(epochMillis: number): Datetime {
         return new Datetime(new Date(epochMillis));
@@ -17,15 +19,15 @@ export class Datetime {
     }
 
     getDateText(): string {
-        const year = this.padStart(this.datetime.getFullYear(), 4);
-        const month = this.padStart(this.datetime.getMonth() + 1, 2);
-        const day = this.padStart(this.datetime.getDate(), 2);
+        const year = padStart(this.datetime.getFullYear(), 4);
+        const month = padStart(this.datetime.getMonth() + 1, 2);
+        const day = padStart(this.datetime.getDate(), 2);
         return `${year}-${month}-${day}`;
     }
 
     getTimeText(): string {
-        const hour = this.padStart(this.datetime.getHours(), 2);
-        const minute = this.padStart(this.datetime.getMinutes(), 2);
+        const hour = padStart(this.datetime.getHours(), 2);
+        const minute = padStart(this.datetime.getMinutes(), 2);
         return `${hour}:${minute}`;
     }
 
@@ -52,9 +54,5 @@ export class Datetime {
 
     private getEpochMinutes(): number {
         return Math.round(this.datetime.getTime() / 60_000);
-    }
-
-    private padStart(value: number, maxLength: number): string {
-        return value.toString().padStart(maxLength, '0');
     }
 }

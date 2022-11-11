@@ -1,6 +1,7 @@
 <script lang="ts">
 import { derived } from "svelte/store";
 import DaySummary from "./components/DaySummary.svelte";
+import ImportExport from "./components/ImportExport.svelte";
 
 import RecentTags from "./components/RecentTags.svelte";
 import Splitter from "./components/Splitter.svelte";
@@ -55,6 +56,10 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 		padding: 0;
 	}
 
+	.import-export {
+		position: absolute;
+	}
+
 	@media (min-width: 640px) {
 		main {
 			max-width: none;
@@ -63,6 +68,9 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 </style>
 
 <main>
+	<div class="import-export">
+		<ImportExport></ImportExport>
+	</div>
 	<h1>Timesplit</h1>
 	<Splitter></Splitter>
 	<RecentTags></RecentTags>
