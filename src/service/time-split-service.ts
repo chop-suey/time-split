@@ -37,22 +37,23 @@ export class TimeSplitService {
         return this.splitsStore;
     }
 
+    getRawSplits(): [number, string][] {
+        const value = localStorage.getItem(LOCAL_STORAGE_KEY) ?? "[]";
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed)
+            ? parsed : [];
+    }
+
     getRecentTags(): Readable<string[]> {
         return this.recentTagsStore;
     }
 
     private getTimeSplitsFromStorage(): Timesplit[] {
-        const value = localStorage.getItem(LOCAL_STORAGE_KEY);
-        return !value 
-            ? []
-            : this.parseStoredValue(value);
+        return this.parseStoredValue(this.getRawSplits())
     }
 
-    private parseStoredValue(value: string): Timesplit[] {
-        const parsed = JSON.parse(value);
-        const splits = Array.isArray(parsed) 
-            ? parsed.map((split, index) => new Timesplit(index, split[1], Datetime.fromTime(split[0])))
-            : [];
+    private parseStoredValue(rawSplits: [number, string][]): Timesplit[] {
+        const splits = rawSplits.map((split, index) => new Timesplit(index, split[1], Datetime.fromTime(split[0])));
         this.nextId = splits.length;
         return splits;
     }
