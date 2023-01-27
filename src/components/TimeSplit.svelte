@@ -14,28 +14,25 @@ const timeSplitService = getTimeSplitService();
     let editedTime: string;
     let editedTag: string;
 
-    let time = new Datetime();
+    let tick = 0;
 
     $: timeText = split.start.getTimeText();
 
     $: duration = getDurationHours(split);
-    $: durationOngoing = getDurationHoursOngoing(split, time);
+    $: durationOngoing = getDurationHoursOngoing(split, tick);
 
     onMount(() => {
-        const interval = setInterval(() => time = new Datetime(), 60 * 1000);
+        const interval = setInterval(() => tick = tick + 1, 60 * 1000);
         return () => clearInterval(interval);
     });
 
     function getDurationHours(s: Timesplit): string {
-        const duration = s.getDurationMinutes(true) / 60;
+        const duration = s.getDurationMinutes() / 60;
         return duration > 0 ? duration.toFixed(2) : null;
     }
 
-    function getDurationHoursOngoing(s: Timesplit, time: Datetime) {
-        const duration = !s.end && time.isSameDay(s.start)
-            ? s.start.getDifferenceMinutes(time) / 60
-            : null;
-        return duration?.toFixed(2);
+    function getDurationHoursOngoing(s: Timesplit, _: number): string | null {
+        return s.getDurationHoursOngoing()?.toFixed(2);
     }
 
     function deleteSplit(ignored: Event): void {

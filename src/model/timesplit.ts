@@ -1,4 +1,4 @@
-import type { Datetime } from "./datetime";
+import { Datetime } from "./datetime";
 
 export class Timesplit {
     constructor(
@@ -20,10 +20,20 @@ export class Timesplit {
         return new Timesplit(this.id, tag, this.start, this.end);
     }
 
-    getDurationMinutes(sameDayOnly = false): number {
+    getDurationMinutes(sameDayOnly = true): number {
         return sameDayOnly && !this.start?.isSameDay(this.end)
             ? 0
             : this.start?.getDifferenceMinutes(this.end) ?? 0;
+    }
+
+    getDurationHoursOngoing(sameDayOnly = true): number {
+        const time = new Datetime();
+
+        if (!!this.end || (sameDayOnly && !time.isSameDay(this.start))) {
+            return null;
+        }
+
+        return this.start.getDifferenceMinutes(time) / 60;
     }
 
     compare(other: Timesplit): number {
