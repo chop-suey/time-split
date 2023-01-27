@@ -37,9 +37,8 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 
 <style>
 	main {
-		text-align: center;
-		max-width: 240px;
-		margin: 0 auto;
+		position: absolute;
+		width: 100%;
 	}
 
 	h1 {
@@ -47,6 +46,9 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 		text-transform: uppercase;
 		font-size: 4em;
 		font-weight: 100;
+		margin: 0.5em auto;
+
+		text-align: center;
 	}
 
 	ul.day-splits {
@@ -56,21 +58,29 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 		padding: 0;
 	}
 
-	.import-export {
+	nav {
 		position: absolute;
+		top: 0;
 	}
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+	nav ul {
+		list-style: none;
+	}
+
+	nav ul li {
+		display: inline-block;
+		padding: 0.2em;
 	}
 </style>
 
 <main>
-	<div class="import-export">
-		<ImportExport></ImportExport>
-	</div>
+	<nav>
+		<ul>
+			<li>
+				<ImportExport></ImportExport>
+			</li>
+		</ul>
+	</nav>
 	<h1>Timesplit</h1>
 	<Splitter></Splitter>
 	<RecentTags></RecentTags>

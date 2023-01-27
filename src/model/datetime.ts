@@ -25,6 +25,10 @@ export class Datetime {
         return `${year}-${month}-${day}`;
     }
 
+    getDisplayDateText(): string {
+        return this.datetime.toLocaleDateString()
+    }
+
     getTimeText(): string {
         const hour = padStart(this.datetime.getHours(), 2);
         const minute = padStart(this.datetime.getMinutes(), 2);

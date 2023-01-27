@@ -114,12 +114,8 @@ const timeSplitService = getTimeSplitService();
         align-items: center;
     }
 
-    #split > * {
-        margin: 2px 5px;
-    }
-
     #time {
-        width: 100px;
+        width: 60px;
     }
 
     #description {
