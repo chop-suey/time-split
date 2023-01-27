@@ -2,17 +2,22 @@
     import { onMount } from "svelte";
 import type { SplitGroup } from "../model/split-group";
 import type { Timesplit } from "../model/timesplit";
+    import { getPreferencesService } from "../service/service-manager";
 import WorkingHoursSummary from "./WorkingHoursSummary.svelte";
 
 export let group: SplitGroup;
+
+const preferencesService = getPreferencesService();
 
 let displaySummary = false;
 let tick = 0;
 
 $: daySummary = summarize(group.splits, tick);
 
+let refreshTimeoutHandle = null;
+
 interface DaySummary {
-    totalHours: number;
+    totalWorkingHours: number;
     ongoing: boolean;
     entries: Summary[];
 }
@@ -23,19 +28,35 @@ interface Summary {
     ongoing: boolean;
 }
 
-onMount(() => {
-    const interval = setInterval(() => tick = tick + 1, 60 * 1000);
-    return () => clearInterval(interval);
-});
+onMount(() => () => stopTimeout());
+
+function stopTimeout() {
+    if (refreshTimeoutHandle != null) {
+        clearTimeout(refreshTimeoutHandle);
+        refreshTimeoutHandle = null;
+    }
+}
+
+function scheduleRefresh() {
+    stopTimeout();
+    refreshTimeoutHandle = setTimeout(() => tick = tick + 1, 60 * 1000);
+}
 
 function summarize(splits: Timesplit[], _: number): DaySummary {
     const entries = splits
         .reduce(addToSummary, [])
         .sort((a, b) => a.tag.localeCompare(b.tag));
-    const totalHours = entries.reduce((sum, curr) => sum + curr.hours, 0);
+    const nonWorkTags = preferencesService.getNonWorkTags();
+    const totalWorkingHours = entries
+        .filter(entry => !nonWorkTags.has(entry.tag))
+        .reduce((sum, curr) => sum + curr.hours, 0);
     const ongoing = entries.some(entry => entry.ongoing);
 
-    return { totalHours, ongoing, entries };
+    if (ongoing) {
+        scheduleRefresh();
+    }
+
+    return { totalWorkingHours, ongoing, entries };
 }
 
 function addToSummary(summaries: Summary[], split: Timesplit): Summary[] {
@@ -145,7 +166,7 @@ function toggleSummary(ignored: Event): void {
             <img src="assets/expand_more.svg" alt="Expand Summary">
             {/if}
         </span>
-        <span id="duration" class:ongoing="{daySummary.ongoing}">({daySummary.totalHours.toFixed(2)} h)</span>
+        <span id="duration" class:ongoing="{daySummary.ongoing}">({daySummary.totalWorkingHours.toFixed(2)} h)</span>
         <h1>{ group.date.getDisplayDateText() }</h1>
     </div>
     {#if displaySummary}
@@ -158,8 +179,8 @@ function toggleSummary(ignored: Event): void {
             </tr>
             {/each}
             <tr id="total">
-                <th>Total</th>
-                <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalHours.toFixed(2) } h</td>
+                <th>Working hours</th>
+                <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalWorkingHours.toFixed(2) } h</td>
             </tr>
         </table>
         <WorkingHoursSummary splits={group.splits}></WorkingHoursSummary>
