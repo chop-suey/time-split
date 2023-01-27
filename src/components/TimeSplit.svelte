@@ -15,16 +15,26 @@ const timeSplitService = getTimeSplitService();
     let editedTag: string;
 
     let tick = 0;
+    let refreshTimeoutHandle = null;
 
     $: timeText = split.start.getTimeText();
 
     $: duration = getDurationHours(split);
     $: durationOngoing = getDurationHoursOngoing(split, tick);
 
-    onMount(() => {
-        const interval = setInterval(() => tick = tick + 1, 60 * 1000);
-        return () => clearInterval(interval);
-    });
+    onMount(() => () => stopTimeout());
+
+    function stopTimeout() {
+        if (refreshTimeoutHandle != null) {
+            clearTimeout(refreshTimeoutHandle);
+            refreshTimeoutHandle = null;
+        }
+    }
+
+    function scheduleRefresh() {
+        stopTimeout();
+        refreshTimeoutHandle = setTimeout(() => tick = tick + 1, 60 * 1000);
+    }
 
     function getDurationHours(s: Timesplit): string {
         const duration = s.getDurationMinutes() / 60;
@@ -32,7 +42,13 @@ const timeSplitService = getTimeSplitService();
     }
 
     function getDurationHoursOngoing(s: Timesplit, _: number): string | null {
-        return s.getDurationHoursOngoing()?.toFixed(2);
+        const durationOngoing = s.getDurationHoursOngoing()?.toFixed(2);
+        if (durationOngoing == null) {
+            stopTimeout();
+        } else {
+            scheduleRefresh();
+        }
+        return durationOngoing;
     }
 
     function deleteSplit(ignored: Event): void {
