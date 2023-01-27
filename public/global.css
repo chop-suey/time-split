@@ -17,18 +17,6 @@ a {
 	text-decoration: none;
 }
 
-a:hover {
-	text-decoration: underline;
-}
-
-a:visited {
-	color: rgb(0,80,160);
-}
-
-label {
-	display: block;
-}
-
 input, button, select, textarea {
 	font-family: inherit;
 	font-size: inherit;
@@ -56,6 +44,7 @@ button:disabled {
 }
 
 button.chips {
+	padding: 0.5em;
 	border-color: #aaffaa;
 	background-color: #ddffdd;
 }
@@ -66,10 +55,4 @@ button:not(:disabled):active {
 
 button:focus {
 	border-color: #666;
-}
-
-form {
-	display: flex;
-	justify-content: center;
-	align-items: center;
 }

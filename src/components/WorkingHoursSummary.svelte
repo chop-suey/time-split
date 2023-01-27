@@ -19,7 +19,33 @@ import { extractWorkingHours } from "../util/working-hours";
     }
 </script>
 
-<div>
+<style>
+    #container {
+        display: flex;
+        justify-content: center;
+        margin: 0.5em;
+    }
+
+    form {
+        display: inline-flex;
+        flex-direction: row;
+        width: 480px;
+    }
+
+    form * {
+        margin: 0.3em;
+    }
+
+    input {
+        flex: 1;
+    }
+
+    button {
+        flex: 0;
+    }
+</style>
+
+<div id="container">
     <form on:submit="{copySummary}">
         <input type="text" readonly value="{ workingHours }" disabled>
         <button type="submit"><img src="assets/copy.svg" alt="Copy"></button>

@@ -35,44 +35,66 @@ function toggleSummary(ignored: Event): void {
 </script>
 
 <style>
-    .day_summary {
-        margin: 0;
+    #day_summary_container {
+        margin: 0.4em auto;
         padding: 0;
         background-color: #B0BEC5;
         border-bottom: 1px solid #B0BEC5;
     }
 
-    h1 {
-        margin: 0;
-        padding: 0;
-
+    #title {
+        position: relative;
         cursor: pointer;
     }
 
-    .chevron {
-        float: left;
-    }
-
-    .summary {
-        background-color: #CFD8DC;
-    }
-
-    dl {
+    h1 {
         margin: 0;
-        padding: 0.5em;
+        padding: 0.3em;
+
+        font-weight: bold;
+        font-size: 1.5em;
+
+        cursor: pointer;
+
+        text-align: center;
     }
 
-    dt {
+    .chevron {
+        position: absolute;
+        left: 0.5em;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    #summary {
+        background-color: #CFD8DC;
+        padding: 0.4em;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    table {
+        display: inline;
+        text-align: left;
+    }
+
+    th {
         font-weight: bold;
     }
 
-    dt::after {
-        content: ": ";
+    th, td {
+        padding: 0.5em 0.4em;
     }
 </style>
 
-<div class="day_summary">
-    <h1 on:click="{toggleSummary}">
+
+
+<div id="day_summary_container">
+    <div id="title" on:click="{toggleSummary}">        
         <span class="chevron">
             {#if displaySummary}
             <img src="assets/expand_less.svg" alt="Collapse Summary">
@@ -80,15 +102,18 @@ function toggleSummary(ignored: Event): void {
             <img src="assets/expand_more.svg" alt="Expand Summary">
             {/if}
         </span>
-        { group.date.getDateText() }</h1>
+        <h1>{ group.date.getDisplayDateText() }</h1>
+    </div>
     {#if displaySummary}
-    <div class="summary">
-        <dl>
+    <div id="summary">
+        <table>
             {#each entries as entry}
-            <dt>{ entry.tag }</dt>
-            <dd>{ entry.hours.toFixed(2) } h</dd>
+            <tr>
+                <th>{ entry.tag }</th>
+                <td>{ entry.hours.toFixed(2) } h</td>
+            </tr>
             {/each}
-        </dl>
+        </table>
         <WorkingHoursSummary splits={group.splits}></WorkingHoursSummary>
     </div>
     {/if}

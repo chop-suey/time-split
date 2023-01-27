@@ -8,7 +8,7 @@ export class TimeSplitService {
     private nextId = 0;
 
     private readonly splitsStore = writable(this.getTimeSplitsFromStorage());
-    private readonly recentTagsStore = derived(this.splitsStore, splits => this.getRecentTagsFromSplits(splits, 5));
+    private readonly recentTagsStore = derived(this.splitsStore, splits => this.getRecentTagsFromSplits(splits, 6));
 
     constructor() {
         this.splitsStore.subscribe(splits => this.storeTimeSplits(splits));
