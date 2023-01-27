@@ -47,10 +47,10 @@ function summarize(splits: Timesplit[], _: number): DaySummary {
         .reduce(addToSummary, [])
         .sort((a, b) => a.tag.localeCompare(b.tag));
     const nonWorkTags = preferencesService.getNonWorkTags();
-    const totalWorkingHours = entries
-        .filter(entry => !nonWorkTags.has(entry.tag))
-        .reduce((sum, curr) => sum + curr.hours, 0);
-    const ongoing = entries.some(entry => entry.ongoing);
+    const workEntries = entries
+        .filter(entry => !nonWorkTags.has(entry.tag));
+    const totalWorkingHours = workEntries.reduce((sum, curr) => sum + curr.hours, 0);
+    const ongoing = workEntries.some(entry => entry.ongoing);
 
     if (ongoing) {
         scheduleRefresh();
@@ -72,7 +72,7 @@ function addToSummary(summaries: Summary[], split: Timesplit): Summary[] {
 
     const summary = summaries.find(summary => summary.tag === split.tag);
     summary.hours += hours;
-    summary.ongoing = ongoing;
+    summary.ongoing = summary.ongoing || ongoing;
     return summaries;
 }
 
