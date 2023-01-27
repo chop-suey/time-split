@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
 import type { SplitGroup } from "../model/split-group";
 import type { Timesplit } from "../model/timesplit";
 import WorkingHoursSummary from "./WorkingHoursSummary.svelte";
@@ -6,25 +7,51 @@ import WorkingHoursSummary from "./WorkingHoursSummary.svelte";
 export let group: SplitGroup;
 
 let displaySummary = false;
+let tick = 0;
 
-$: entries = summarize(group.splits);
+$: daySummary = summarize(group.splits, tick);
+
+interface DaySummary {
+    totalHours: number;
+    ongoing: boolean;
+    entries: Summary[];
+}
 
 interface Summary {
     tag: string;
     hours: number;
+    ongoing: boolean;
 }
 
-function summarize(splits: Timesplit[]): Summary[] {
-    return splits
+onMount(() => {
+    const interval = setInterval(() => tick = tick + 1, 60 * 1000);
+    return () => clearInterval(interval);
+});
+
+function summarize(splits: Timesplit[], _: number): DaySummary {
+    const entries = splits
         .reduce(addToSummary, [])
         .sort((a, b) => a.tag.localeCompare(b.tag));
+    const totalHours = entries.reduce((sum, curr) => sum + curr.hours, 0);
+    const ongoing = entries.some(entry => entry.ongoing);
+
+    return { totalHours, ongoing, entries };
 }
 
 function addToSummary(summaries: Summary[], split: Timesplit): Summary[] {
     if (!summaries.find(summary => summary.tag === split.tag)) {
-        summaries.push({ tag: split.tag, hours: 0 });
+        summaries.push({ tag: split.tag, hours: 0, ongoing: false });
     }
-    summaries.find(summary => summary.tag === split.tag).hours += split.getDurationMinutes(true) / 60;
+
+    const hoursOngoing = split.getDurationHoursOngoing()
+    const ongoing = hoursOngoing != null;
+    const hours = ongoing
+        ? hoursOngoing
+        : split.getDurationMinutes() / 60;
+
+    const summary = summaries.find(summary => summary.tag === split.tag);
+    summary.hours += hours;
+    summary.ongoing = ongoing;
     return summaries;
 }
 
@@ -38,8 +65,8 @@ function toggleSummary(ignored: Event): void {
     #day_summary_container {
         margin: 0.4em auto;
         padding: 0;
-        background-color: #B0BEC5;
-        border-bottom: 1px solid #B0BEC5;
+        background-color: #DDDDDF;
+        border-bottom: 1px solid #DDDDDF;
     }
 
     #title {
@@ -68,8 +95,18 @@ function toggleSummary(ignored: Event): void {
         justify-content: center;
     }
 
+    #title span#duration {
+        position: absolute;
+        top: 25%;
+        right: 0.5em;
+    }
+
+    #title span#duration.ongoing {
+        color: #AAA;
+    }
+
     #summary {
-        background-color: #CFD8DC;
+        background-color: #EEEEEF;
         padding: 0.4em;
 
         display: flex;
@@ -82,6 +119,10 @@ function toggleSummary(ignored: Event): void {
         text-align: left;
     }
 
+    tr#total {
+        border-top: 1px solid #AAA;
+    }
+
     th {
         font-weight: bold;
     }
@@ -89,9 +130,11 @@ function toggleSummary(ignored: Event): void {
     th, td {
         padding: 0.5em 0.4em;
     }
+
+    .ongoing {
+        color: #AAA;
+    }
 </style>
-
-
 
 <div id="day_summary_container">
     <div id="title" on:click="{toggleSummary}">        
@@ -102,17 +145,22 @@ function toggleSummary(ignored: Event): void {
             <img src="assets/expand_more.svg" alt="Expand Summary">
             {/if}
         </span>
+        <span id="duration" class:ongoing="{daySummary.ongoing}">({daySummary.totalHours.toFixed(2)} h)</span>
         <h1>{ group.date.getDisplayDateText() }</h1>
     </div>
     {#if displaySummary}
     <div id="summary">
         <table>
-            {#each entries as entry}
+            {#each daySummary.entries as entry}
             <tr>
                 <th>{ entry.tag }</th>
-                <td>{ entry.hours.toFixed(2) } h</td>
+                <td class:ongoing="{ entry.ongoing }">{ entry.hours.toFixed(2) } h</td>
             </tr>
             {/each}
+            <tr id="total">
+                <th>Total</th>
+                <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalHours.toFixed(2) } h</td>
+            </tr>
         </table>
         <WorkingHoursSummary splits={group.splits}></WorkingHoursSummary>
     </div>
