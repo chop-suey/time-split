@@ -12,37 +12,10 @@ let tag = '';
 	}
 </script>
 
-<style>
-    #container {
-        display: flex;
-        justify-content: center;
-        margin: 0.5em;
-    }
-
-    form {
-        display: inline-flex;
-        flex-direction: row;
-        width: 480px;
-    }
-
-    form > * {
-        margin: 0.3em;
-    }
-
-    input {
-        flex: 1;
-    }
-
-    button {
-        flex: 0;
-    }
-
-</style>
-
-<div id="container">
-    <form on:submit="{onSubmit}">
-        <input id="tag" type="text" bind:value={tag}>
-        <button type="submit">
+<div class="main">
+    <form class="box" on:submit="{onSubmit}">
+        <input class="border expand sh item" id="tag" type="text" bind:value={tag}>
+        <button class="sh sw border" type="submit">
             <img src="assets/add.svg" alt="Add Split">
         </button>
     </form>
