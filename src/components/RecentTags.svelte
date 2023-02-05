@@ -10,15 +10,12 @@ timeSplitService.getRecentTags().subscribe(tags => recentTags = tags);
 
 <style>
     #container {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        margin: 0.5em;
+        margin: 0.7em;
     }
 </style>
 
-<div id="container">
+<div id="container" class="box">
     {#each recentTags as recentTag}
-    <button class="chips" on:click="{ () => timeSplitService.newSplit(recentTag) }">{recentTag}</button>
+    <button class="chip border" on:click="{ () => timeSplitService.newSplit(recentTag) }">{recentTag}</button>
     {/each}
 </div>

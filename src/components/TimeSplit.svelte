@@ -1,6 +1,5 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { Datetime } from "../model/datetime";
 
 import { LocalTime } from "../model/local-time";
 import type { Timesplit } from "../model/timesplit";
@@ -77,63 +76,50 @@ const timeSplitService = getTimeSplitService();
     }
 </script>
 
-<div id="component">
-    <div id="split">
-        <div id="time">
-            {#if editMode}
-            <form on:submit="{saveSplit}">
-                <input type="text" pattern="{LocalTime.pattern}" bind:value="{editedTime}">
-            </form>
-            {:else}
+<div class="main box">
+    
+    <div id="time">
+        {#if editMode}
+        <form on:submit="{saveSplit}">
+            <input class="item sh border" type="text" pattern="{LocalTime.pattern}" bind:value="{editedTime}">
+        </form>
+        {:else}
+        <div class="pl">
             { timeText }
-            {/if} 
         </div>
-        <div id="description">
-            {#if editMode}
-            <form on:submit="{saveSplit}">
-                <input type="text" bind:value="{editedTag}">
-            </form>
-            {:else}
+        {/if} 
+    </div>
+
+    <div class="expand">
+        {#if editMode}
+        <form on:submit="{saveSplit}">
+            <input class="item sh border" type="text" bind:value="{editedTag}">
+        </form>
+        {:else}
+            <span class="pl">
                 { split.tag }
-                {#if !!duration}
-                    <span class="duration">({duration} h)</span>
-                {:else if !!durationOngoing}
-                    <span class="duration ongoing">({durationOngoing} h)</span>
-                {/if}
-            {/if} 
-        </div>
-        <div id="controls">
-            {#if editMode}
-                <button on:click="{saveSplit}"><img src="assets/save.svg" alt="Save"></button>
-            {:else}
-                <button on:click="{editSplit}"><img src="assets/edit.svg" alt="Edit"></button>
-                <button on:click="{deleteSplit}"><img src="assets/delete.svg" alt="Delete"></button>
+            </span>
+            {#if !!duration}
+                <span class="duration">({duration} h)</span>
+            {:else if !!durationOngoing}
+                <span class="duration ongoing">({durationOngoing} h)</span>
             {/if}
-        </div>
+        {/if} 
+    </div>
+
+    <div class="box">
+        {#if editMode}
+            <button class="sh sw border" on:click="{saveSplit}"><img src="assets/save.svg" alt="Save"></button>
+        {:else}
+            <button class="sh sw border" on:click="{editSplit}"><img src="assets/edit.svg" alt="Edit"></button>
+            <button class="sh sw border" on:click="{deleteSplit}"><img src="assets/delete.svg" alt="Delete"></button>
+        {/if}
     </div>
 </div>
 
 <style>
-    #component {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    #split {
-        width: 480px;
-        display: flex;
-        justify-content: stretch;
-        align-items: center;
-    }
-
     #time {
         width: 60px;
-    }
-
-    #description {
-        flex: 1;
-        text-align: left;
     }
 
     .duration {
@@ -142,10 +128,5 @@ const timeSplitService = getTimeSplitService();
 
     .duration.ongoing {
         color: #AAA;
-    }
-
-    input {
-        margin: 0;
-        width: 100%;
     }
 </style>

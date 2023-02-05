@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+import { onMount } from "svelte";
 import type { SplitGroup } from "../model/split-group";
 import type { Timesplit } from "../model/timesplit";
     import { getPreferencesService } from "../service/service-manager";

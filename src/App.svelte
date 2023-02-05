@@ -54,7 +54,7 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 	ul.day-splits {
 		list-style-type: none;
 
-		margin: 0.5em 0;
+		margin: 0.8em 0;
 		padding: 0;
 	}
 
