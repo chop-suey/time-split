@@ -104,3 +104,8 @@ form > input {
 button {
 	cursor: pointer;
 }
+
+button img {
+	display: block;
+	margin: auto;
+}
