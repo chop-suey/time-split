@@ -5,16 +5,38 @@ export class Datetime {
         return new Datetime(new Date(epochMillis));
     }
 
+    /**
+     * Create a Datetime which is set to the exact start of the current
+     * minute. This means that seconds and milliseconds are set to zero
+     * and therefore the timestamp is "floored" to the closest minute.
+     */
+    public static withMinuteAccuracy(): Datetime {
+        const date = new Date()
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        return new Datetime(date);
+    }
+
     private readonly datetime: Date;
 
     constructor(date = new Date()) {
         this.datetime = new Date(date);
     }
 
+    /**
+     * Create a new Datetime with the same date and with the time
+     * set to the provided parameters.
+     * This will also set the seconds and milliseconds to zero.
+     *
+     * @param hours The hour the new Datetime will be set to
+     * @param minutes The minute the new Datetime will be set to
+     */
     withTime(hours: number, minutes: number): Datetime {
         const newDate = new Date(this.datetime);
         newDate.setHours(hours);
         newDate.setMinutes(minutes);
+        newDate.setSeconds(0);
+        newDate.setMilliseconds(0);
         return new Datetime(newDate);
     }
 
