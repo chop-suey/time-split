@@ -4,6 +4,7 @@ import { onMount } from "svelte";
 import { LocalTime } from "../model/local-time";
 import type { Timesplit } from "../model/timesplit";
 import { getTimeSplitService } from "../service/service-manager";
+import type { Duration } from "../model/duration";
 
 const timeSplitService = getTimeSplitService();
 
@@ -18,8 +19,8 @@ const timeSplitService = getTimeSplitService();
 
     $: timeText = split.start.getTimeText();
 
-    $: duration = getDurationHours(split);
-    $: durationOngoing = getDurationHoursOngoing(split, tick);
+    $: duration = split.getDuration();
+    $: durationOngoing = getDurationOngoing(split, tick);
 
     onMount(() => () => stopTimeout());
 
@@ -35,13 +36,8 @@ const timeSplitService = getTimeSplitService();
         refreshTimeoutHandle = setTimeout(() => tick = tick + 1, 60 * 1000);
     }
 
-    function getDurationHours(s: Timesplit): string {
-        const duration = s.getDurationMinutes() / 60;
-        return duration > 0 ? duration.toFixed(2) : null;
-    }
-
-    function getDurationHoursOngoing(s: Timesplit, _: number): string | null {
-        const durationOngoing = s.getDurationHoursOngoing()?.toFixed(2);
+    function getDurationOngoing(s: Timesplit, _: number): Duration {
+        const durationOngoing = s.getDurationOngoing();
         if (durationOngoing == null) {
             stopTimeout();
         } else {
@@ -99,10 +95,10 @@ const timeSplitService = getTimeSplitService();
             <span class="pl">
                 { split.tag }
             </span>
-            {#if !!duration}
-                <span class="duration">({duration} h)</span>
+            {#if duration.hasDuration()}
+                <span class="duration">({duration})</span>
             {:else if !!durationOngoing}
-                <span class="duration ongoing">({durationOngoing} h)</span>
+                <span class="duration ongoing">({durationOngoing})</span>
             {/if}
         {/if} 
     </div>
