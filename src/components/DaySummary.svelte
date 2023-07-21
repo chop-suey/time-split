@@ -40,7 +40,8 @@ function stopTimeout() {
 
 function scheduleRefresh() {
     stopTimeout();
-    refreshTimeoutHandle = setTimeout(() => tick = tick + 1, 60 * 1000);
+    const timeout = (60 - (new Date()).getSeconds()) * 1000;
+    refreshTimeoutHandle = setTimeout(() => tick = tick + 1, timeout);
 }
 
 function summarize(splits: Timesplit[], _: number): DaySummary {
