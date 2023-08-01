@@ -13,6 +13,14 @@ npm install
 Run application in developer mode
 ```bash
 npm run dev
-````
+```
 
 Open `localhost:8080` in your Browser
+
+## Deployment
+
+```bash
+npm run build
+```
+
+After building upload the *contents* of `public/` to the server.
