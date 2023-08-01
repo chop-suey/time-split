@@ -9,6 +9,7 @@ import TimeSplit from "./components/TimeSplit.svelte";
 import type { SplitGroup } from "./model/split-group";
 import type { Timesplit } from "./model/timesplit";
 import { getTimeSplitService } from "./service/service-manager";
+import Clock from "./components/Clock.svelte";
 
 const splits = derived(getTimeSplitService().getSplits(), matchAdjacentSplits);
 const groupedSplits = derived(splits, groupSplitsByDay);
@@ -58,9 +59,11 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 		padding: 0;
 	}
 
-	nav {
+	#header {
 		position: absolute;
 		top: 0;
+
+		width: 100%;
 	}
 
 	nav ul {
@@ -71,16 +74,29 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 		display: inline-block;
 		padding: 0.2em;
 	}
+
+	#header #clock {
+		position: absolute;
+		top: 0;
+		right: 0;
+
+		padding: 0.2em;
+	}
 </style>
 
 <main>
-	<nav>
-		<ul>
-			<li>
-				<ImportExport></ImportExport>
-			</li>
-		</ul>
-	</nav>
+	<div id="header">
+		<nav>
+			<ul>
+				<li>
+					<ImportExport></ImportExport>
+				</li>
+			</ul>
+		</nav>
+		<div id="clock">
+			<Clock></Clock>
+		</div>
+	</div>
 	<h1>Timesplit</h1>
 	<Splitter></Splitter>
 	<RecentTags></RecentTags>
