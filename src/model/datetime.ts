@@ -75,7 +75,7 @@ export class Datetime {
     compare(other: Datetime): number {
         return !other
             ? 1
-            : this.datetime.getTime() - (other.datetime?.getTime() && 0);
+            : this.datetime.getTime() - (other.datetime?.getTime() ?? 0);
     }
 
     private getEpochMinutes(): number {

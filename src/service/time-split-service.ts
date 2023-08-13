@@ -66,7 +66,7 @@ export class TimeSplitService {
     
     
     private getRecentTagsFromSplits(splits: Timesplit[], n: number): string[] {
-        return splits
+        return [ ...splits ]
             .sort((a, b) => b.compare(a))
             .map(split => split.tag)
             .reduce((tags, curr) => tags.includes(curr) ? tags : [ ...tags, curr ], [])
