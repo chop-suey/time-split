@@ -15,7 +15,7 @@ export class TimeSplitService {
     }
 
     newSplit(tag: string): void {
-        const datetime = Datetime.withMinuteAccuracy();
+        const datetime = new Datetime();
         this.splitsStore.update(splits => [ new Timesplit(this.nextId++, tag, datetime), ...splits ]);
     }
 

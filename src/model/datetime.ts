@@ -5,18 +5,6 @@ export class Datetime {
         return new Datetime(new Date(epochMillis));
     }
 
-    /**
-     * Create a Datetime which is set to the exact start of the current
-     * minute. This means that seconds and milliseconds are set to zero
-     * and therefore the timestamp is "floored" to the closest minute.
-     */
-    public static withMinuteAccuracy(): Datetime {
-        const date = new Date()
-        date.setSeconds(0);
-        date.setMilliseconds(0);
-        return new Datetime(date);
-    }
-
     private readonly datetime: Date;
 
     constructor(date = new Date()) {
@@ -79,6 +67,6 @@ export class Datetime {
     }
 
     private getEpochMinutes(): number {
-        return Math.round(this.datetime.getTime() / 60_000);
+        return Math.floor(this.datetime.getTime() / 60_000);
     }
 }
