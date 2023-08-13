@@ -29,7 +29,7 @@ export class Timesplit {
     }
 
     getDurationOngoing(sameDayOnly = true): Duration {
-        const time = Datetime.withMinuteAccuracy();
+        const time = new Datetime();
 
         if (!!this.end || (sameDayOnly && !time.isSameDay(this.start))) {
             return null;
