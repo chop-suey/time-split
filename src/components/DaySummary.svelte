@@ -94,7 +94,6 @@ function toggleSummary(ignored: Event): void {
 
     #title {
         position: relative;
-        cursor: pointer;
     }
 
     h1 {
@@ -104,18 +103,18 @@ function toggleSummary(ignored: Event): void {
         font-weight: bold;
         font-size: 1.5em;
 
-        cursor: pointer;
-
         text-align: center;
     }
 
-    .chevron {
+    #title > button {
         position: absolute;
         left: 0.5em;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        background-color: transparent;
+        border: 0px;
     }
 
     #title span#duration {
@@ -160,14 +159,14 @@ function toggleSummary(ignored: Event): void {
 </style>
 
 <div id="day_summary_container">
-    <div id="title" on:click="{toggleSummary}">        
-        <span class="chevron">
+    <div id="title">        
+        <button on:click="{toggleSummary}">
             {#if displaySummary}
-            <img src="assets/expand_less.svg" alt="Collapse Summary">
-            {:else}
-            <img src="assets/expand_more.svg" alt="Expand Summary">
-            {/if}
-        </span>
+                <img src="assets/expand_less.svg" alt="Collapse Summary">
+                {:else}
+                <img src="assets/expand_more.svg" alt="Expand Summary">
+                {/if}
+        </button>
         <span id="duration" class:ongoing="{daySummary.ongoing}">({daySummary.totalDuration})</span>
         <h1>{ group.date.getDisplayDateText() }</h1>
     </div>
