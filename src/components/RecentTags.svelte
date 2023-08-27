@@ -1,11 +1,11 @@
 <script lang="ts">
-import { getTimeSplitService } from "../service/service-manager";
+import { getTimeSplitStore } from "../service/service-manager";
 
 let recentTags = [];
 
-const timeSplitService = getTimeSplitService();
+const timeSplitStore = getTimeSplitStore();
 
-timeSplitService.getRecentTags().subscribe(tags => recentTags = tags);
+timeSplitStore.getRecentTags().subscribe(tags => recentTags = tags);
 </script>
 
 <style>
@@ -16,6 +16,6 @@ timeSplitService.getRecentTags().subscribe(tags => recentTags = tags);
 
 <div id="container" class="box">
     {#each recentTags as recentTag}
-    <button class="chip border" on:click="{ () => timeSplitService.newSplit(recentTag) }">{recentTag}</button>
+    <button class="chip border" on:click="{ () => timeSplitStore.newSplit(recentTag) }">{recentTag}</button>
     {/each}
 </div>
