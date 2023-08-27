@@ -8,19 +8,11 @@ import Splitter from "./components/Splitter.svelte";
 import TimeSplit from "./components/TimeSplit.svelte";
 import type { SplitGroup } from "./model/split-group";
 import type { Timesplit } from "./model/timesplit";
-import { getTimeSplitService } from "./service/service-manager";
+import { getTimeSplitStore } from "./service/service-manager";
 import Clock from "./components/Clock.svelte";
 
-const splits = derived(getTimeSplitService().getSplits(), matchAdjacentSplits);
+const splits = getTimeSplitStore().getSplits();
 const groupedSplits = derived(splits, groupSplitsByDay);
-
-// TODO move to split service
-function matchAdjacentSplits(splits: Timesplit[]): Timesplit[] {
-    return splits.reduceRight((acc, split, index, arr) => {
-        const next = index > 0 ? arr[index - 1] : null;
-        return [ (!next ? split : split.withEnd(next.start)), ...acc ];
-    }, []);
-}
 
 function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
     const valueIterator = splits.reduce((acc, curr) => {

@@ -1,13 +1,13 @@
 <script lang="ts">
-import { getTimeSplitService } from "../service/service-manager";
+import { getTimeSplitStore } from "../service/service-manager";
 
-const timeSplitService = getTimeSplitService();
+const timeSplitStore = getTimeSplitStore();
 
 let tag = '';
 
     function onSubmit(event: Event): void {
 		event.preventDefault();
-        timeSplitService.newSplit(tag);
+        timeSplitStore.newSplit(tag);
 		tag = '';
 	}
 </script>

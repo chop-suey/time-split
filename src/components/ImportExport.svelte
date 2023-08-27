@@ -5,7 +5,8 @@
     const timeSplitService = getTimeSplitService();
 
     function exportSplits(ignored: Event) {
-        const raw = timeSplitService.getRawSplits();
+        const raw: [number, string][] = timeSplitService.getAll()
+            .map(({ start, tag }) => [ start.toTime(), tag ]);
         const timestamps = raw.map(split => split[0]);
         const first = Math.min(...timestamps);
         const last = Math.max(...timestamps);

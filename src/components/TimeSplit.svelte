@@ -1,12 +1,12 @@
 <script lang="ts">
-import { onMount } from "svelte";
+    import { onMount } from "svelte";
 
-import { LocalTime } from "../model/local-time";
-import type { Timesplit } from "../model/timesplit";
-import { getTimeSplitService } from "../service/service-manager";
-import type { Duration } from "../model/duration";
+    import { LocalTime } from "../model/local-time";
+    import type { Timesplit } from "../model/timesplit";
+    import { getTimeSplitStore } from "../service/service-manager";
+    import type { Duration } from "../model/duration";
 
-const timeSplitService = getTimeSplitService();
+    const timeSplitStore = getTimeSplitStore();
 
     export let split: Timesplit;
 
@@ -48,7 +48,7 @@ const timeSplitService = getTimeSplitService();
     }
 
     function deleteSplit(ignored: Event): void {
-        timeSplitService.deleteSplit(split);
+        timeSplitStore.deleteSplit(split);
     }
 
     function editSplit(ignored: Event): void {
@@ -68,7 +68,7 @@ const timeSplitService = getTimeSplitService();
             const editedSplit = split
                 .withStart(start)
                 .withTag(editedTag);
-            timeSplitService.updateSplit(editedSplit);
+            timeSplitStore.updateSplit(editedSplit);
         }
     }
 </script>
