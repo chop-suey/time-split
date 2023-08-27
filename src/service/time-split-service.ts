@@ -3,10 +3,10 @@ import type { Timesplit } from "../model/timesplit";
 
 export interface TimeSplitService {
     
-    newSplit(start: Datetime, tag: String)
+    newSplit(start: Datetime, tag: String): void
 
-    update(split: Timesplit)
-    delete(split: Timesplit)
+    update(split: Timesplit): void
+    delete(split: Timesplit): void
 
     /**
      * @returns All timesplits ordered descending by time (latest first).

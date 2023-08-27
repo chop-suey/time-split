@@ -4,7 +4,7 @@ import { Datetime } from "../model/datetime";
 import { Timesplit } from "../model/timesplit";
 import { extractWorkingHours } from "./working-hours";
 
-function split(tag: string, hourStart: number, minuteStart: number, hourEnd: number = null, minuteEnd: number = null) {
+function split(tag: string, hourStart: number, minuteStart: number, hourEnd: number | undefined = undefined, minuteEnd: number | undefined = undefined) {
     const start = new Datetime(new Date(2022, 1, 1, hourStart, minuteStart))
     const end = !!hourEnd ? new Datetime(new Date(2022, 1, 1, hourEnd, minuteEnd)) : undefined;
     return new Timesplit(0, tag, start, end)
