@@ -1,7 +1,7 @@
 import type { Datetime } from "../model/datetime";
 import type { Timesplit } from "../model/timesplit";
 
-export function extractWorkingHours(splits: Timesplit[], nonWorkTags: Set<string>): string {
+export function extractWorkingHours(splits: Timesplit[] | null | undefined, nonWorkTags: Set<string>): string {
 
     return (splits ?? [])
         .sort((a, b) => a.start.toTime() - b.start.toTime())

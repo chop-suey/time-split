@@ -1,4 +1,5 @@
-import { derived, Readable, writable } from "svelte/store";
+import { derived, writable } from "svelte/store";
+import type { Readable } from "svelte/store";
 import { Datetime } from "../model/datetime";
 import type { Timesplit } from "../model/timesplit";
 import type { TimeSplitService } from "./time-split-service";
@@ -38,10 +39,10 @@ export class TimeSplitStore {
     }
 
     private getRecentTagsFromSplits(splits: Timesplit[], n: number): string[] {
-        return [ ...splits ]
-            .sort((a, b) => b.compare(a))
+        return splits
+            // .sort((a, b) => b.compare(a))
             .map(split => split.tag)
-            .reduce((tags, curr) => tags.includes(curr) ? tags : [ ...tags, curr ], [])
+            .reduce((tags, curr) => tags.includes(curr) ? tags : [ ...tags, curr ], [] as string[])
             .slice(0, n);
     }
 }
