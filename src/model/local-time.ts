@@ -7,7 +7,7 @@ export class LocalTime {
     static parse(timeString: string): LocalTime | null {
         const match = timeString.match(LocalTime.pattern);
 
-        return match.length >= 3
+        return !!match && match.length >= 3
             ? new LocalTime(parseInt(match[1]), parseInt(match[2]))
             : null;
     }

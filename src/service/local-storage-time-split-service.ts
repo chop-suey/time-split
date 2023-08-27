@@ -4,23 +4,26 @@ import type { TimeSplitService } from "./time-split-service";
 
 const LOCAL_STORAGE_KEY = 'time-splits';
 
+const UNINITALIZED_SPLITS: Timesplit[] = []
+
 let nextId = 0;
-let splits: Timesplit[] = undefined
+let splits: Timesplit[] = UNINITALIZED_SPLITS;
 
 export class LocalStorageTimeSplitService implements TimeSplitService {
+
     constructor() {
-        if (splits === undefined) {
+        if (splits === UNINITALIZED_SPLITS) {
             this.loadTimeSplits();
         }
     }
 
-    newSplit(start: Datetime, tag: string) {
+    newSplit(start: Datetime, tag: string): void {
         const split = new Timesplit(nextId++, tag, start);
         splits = [ split, ...splits ];
         this.sortMatchAndStoreSplits()
     }
 
-    update(split: Timesplit) {
+    update(split: Timesplit): void {
         const index = splits.findIndex(({ id }) => id === split.id);
         if (index >= 0) {
             splits[index] = split;
@@ -28,7 +31,7 @@ export class LocalStorageTimeSplitService implements TimeSplitService {
         }
     }
 
-    delete(split: Timesplit) {
+    delete(split: Timesplit): void {
         splits = splits.filter(({ id }) => split.id !== id);
         this.sortMatchAndStoreSplits();
     }
@@ -73,9 +76,9 @@ export class LocalStorageTimeSplitService implements TimeSplitService {
         splits = splits.reduceRight((acc, split, index, arr) => {
             const matchedSplit = index > 0
                 ? split.withEnd(arr[index - 1].start)
-                : split.withEnd(null);
+                : split.withEnd(undefined);
             return [ matchedSplit, ...acc ];
-        }, []);
+        }, [] as Timesplit[]);
     }
 
     /**
