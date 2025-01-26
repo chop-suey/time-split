@@ -15,7 +15,7 @@
     let editedTag: string;
 
     let tick = 0;
-    let refreshTimeoutHandle = null;
+    let refreshTimeoutHandle: NodeJS.Timeout | null = null;
 
     $: timeText = split.start.getTimeText();
 
@@ -37,7 +37,7 @@
         refreshTimeoutHandle = setTimeout(() => tick = tick + 1, timeout);
     }
 
-    function getDurationOngoing(s: Timesplit, _: number): Duration {
+    function getDurationOngoing(s: Timesplit, _: number): Duration | null {
         const durationOngoing = s.getDurationOngoing();
         if (durationOngoing == null) {
             stopTimeout();
@@ -48,7 +48,10 @@
     }
 
     function deleteSplit(ignored: Event): void {
-        timeSplitStore.deleteSplit(split);
+        let message = `Delete ${split.tag}?`;
+        if (confirm(message)) {
+            timeSplitStore.deleteSplit(split);
+        }
     }
 
     function editSplit(ignored: Event): void {
