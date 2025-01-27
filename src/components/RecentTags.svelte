@@ -1,7 +1,7 @@
 <script lang="ts">
 import { getTimeSplitStore } from "../service/service-manager";
 
-let recentTags = [];
+let recentTags: string[] = [];
 
 const timeSplitStore = getTimeSplitStore();
 

@@ -3,6 +3,7 @@ import { onMount } from "svelte";
 import type { SplitGroup } from "../model/split-group";
 import type { Timesplit } from "../model/timesplit";
 import { getPreferencesService } from "../service/service-manager";
+import Tickets from "./Tickets.svelte";
 import WorkingHoursSummary from "./WorkingHoursSummary.svelte";
 import { Duration } from "../model/duration";
 
@@ -15,7 +16,7 @@ let tick = 0;
 
 $: daySummary = summarize(group.splits, tick);
 
-let refreshTimeoutHandle = null;
+let refreshTimeoutHandle: NodeJS.Timeout | null = null;
 
 interface DaySummary {
     totalDuration: Duration;
@@ -72,7 +73,7 @@ function addToSummary(summaries: Summary[], split: Timesplit): Summary[] {
         ? durationOngoing
         : split.getDuration();
 
-    const summary = summaries.find(summary => summary.tag === split.tag);
+    const summary = summaries.find(summary => summary.tag === split.tag)!;
     summary.duration = summary.duration.plus(duration);
     summary.ongoing = summary.ongoing || ongoing;
     return summaries;
@@ -184,7 +185,10 @@ function toggleSummary(ignored: Event): void {
                 <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalDuration}</td>
             </tr>
         </table>
-        <WorkingHoursSummary splits={group.splits}></WorkingHoursSummary>
+        <div class="main">
+            <Tickets splits={group.splits}></Tickets>
+        </div>
+        <!-- <WorkingHoursSummary splits={group.splits}></WorkingHoursSummary> -->
     </div>
     {/if}
 </div>

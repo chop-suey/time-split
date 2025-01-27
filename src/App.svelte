@@ -20,7 +20,7 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
         if (!acc.has(key)) {
             acc.set(key, []);
         }
-        acc.get(key).push(curr);
+        acc.get(key)!.push(curr);
         return acc;
     }, new Map<string, Timesplit[]>()).values();
     return [ ...valueIterator ]
