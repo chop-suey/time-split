@@ -6,4 +6,9 @@ export class PreferencesService {
         const nonWorkTags = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
         return new Set<string>(nonWorkTags);
     }
+
+    getTicketBaseUrl(): string | null {
+        const storageKey = `${LOCAL_STORAGE_PREFERENCES_KEY}.ticketBaseUrl`;
+        return localStorage.getItem(storageKey);
+    }
 }
