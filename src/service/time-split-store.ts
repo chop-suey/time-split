@@ -7,7 +7,6 @@ import type { TimeSplitService } from "./time-split-service";
 export class TimeSplitStore {
 
     private readonly splitsStore = writable(this.splitsService.getAll());
-    private readonly recentTagsStore = derived(this.splitsStore, splits => this.getRecentTagsFromSplits(splits, 6));
 
     constructor(private splitsService: TimeSplitService) {}
 
@@ -30,8 +29,8 @@ export class TimeSplitStore {
         return this.splitsStore;
     }
 
-    getRecentTags(): Readable<string[]> {
-        return this.recentTagsStore;
+    getRecentTags(n: number): Readable<string[]> {
+        return derived(this.splitsStore, splits => this.getRecentTagsFromSplits(splits, n));
     }
 
     private refreshSplits() {
@@ -40,7 +39,6 @@ export class TimeSplitStore {
 
     private getRecentTagsFromSplits(splits: Timesplit[], n: number): string[] {
         return splits
-            // .sort((a, b) => b.compare(a))
             .map(split => split.tag)
             .reduce((tags, curr) => tags.includes(curr) ? tags : [ ...tags, curr ], [] as string[])
             .slice(0, n);
