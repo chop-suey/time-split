@@ -69,11 +69,6 @@ input, button, select, textarea {
 	margin-right: 0;
 }
 
-.pl {
-	border: 1px solid transparent;
-	padding-left: var(--standard-padding);
-}
-
 /* standard height */
 .sh {
     height: var(--standard-size);

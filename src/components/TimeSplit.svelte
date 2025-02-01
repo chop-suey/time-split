@@ -84,7 +84,7 @@
             <input class="item sh border" type="text" pattern="{LocalTime.pattern}" bind:value="{editedTime}">
         </form>
         {:else}
-        <div class="pl">
+        <div>
             { timeText }
         </div>
         {/if} 
@@ -96,7 +96,7 @@
             <input class="item sh border" type="text" bind:value="{editedTag}">
         </form>
         {:else}
-            <span class="pl">
+            <span>
                 { split.tag }
             </span>
             {#if duration.hasDuration()}
