@@ -145,13 +145,20 @@ function toggleSummary(ignored: Event): void {
     tr#total {
         border-top: 1px solid #AAA;
     }
-
+    
     th {
         font-weight: bold;
+        width: 100%;
     }
 
-    th, td {
-        padding: 0.5em 0.4em;
+    td {
+        width: auto;
+        white-space: nowrap;
+    }
+    
+    th,
+    td {
+        padding: 0.5em 0.4em 0.5em 0;
     }
 
     .ongoing {
@@ -173,18 +180,20 @@ function toggleSummary(ignored: Event): void {
     </div>
     {#if displaySummary}
     <div id="summary">
-        <table>
-            {#each daySummary.entries as entry}
-            <tr>
-                <th>{ entry.tag }</th>
-                <td class:ongoing="{ entry.ongoing }">{entry.duration}</td>
-            </tr>
-            {/each}
-            <tr id="total">
-                <th>Working hours</th>
-                <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalDuration}</td>
-            </tr>
-        </table>
+        <div class="main">
+            <table>
+                {#each daySummary.entries as entry}
+                <tr>
+                    <th>{ entry.tag }</th>
+                    <td class:ongoing="{ entry.ongoing }">{entry.duration}</td>
+                </tr>
+                {/each}
+                <tr id="total">
+                    <th>Working hours</th>
+                    <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalDuration}</td>
+                </tr>
+            </table>
+        </div>
         <div class="main">
             <Tickets splits={group.splits}></Tickets>
         </div>

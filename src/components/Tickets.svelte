@@ -58,7 +58,7 @@
 
 <div id="tickets">
     <h1>Tickets</h1>
-    <p>Only tickets that are not ongoing are included.</p>
+    <p>Splits that have not yet ended are not included.</p>
     <table>
         {#each tickets as ticket}
             <tr>
@@ -78,11 +78,6 @@
 </div>
 
 <style>
-    #tickets {
-        background-color: #eeeeef;
-        padding: 0.4em;
-    }
-
     table {
         width: 100%;
         text-align: left;
