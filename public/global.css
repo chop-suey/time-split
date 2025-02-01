@@ -97,8 +97,9 @@ form > input {
 	border-color: #aaffaa;
 	background-color: #ddffdd;
 
-	margin: 0 0.2em;
 	padding: var(--standard-padding);
+
+	white-space: nowrap;
 }
 
 button {
