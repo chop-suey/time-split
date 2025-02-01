@@ -9,13 +9,20 @@ timeSplitStore.getRecentTags().subscribe(tags => recentTags = tags);
 </script>
 
 <style>
-    #container {
-        margin: 0.7em;
+    #tagcontainer {
+        flex-wrap: wrap;
+        gap: 0.4em;
+    }
+
+    #tagcontainer > * {
+        margin: 0;
     }
 </style>
 
-<div id="container" class="box">
-    {#each recentTags as recentTag}
-    <button class="chip border" on:click="{ () => timeSplitStore.newSplit(recentTag) }">{recentTag}</button>
-    {/each}
+<div class="main">
+    <div id="tagcontainer" class="box">
+        {#each recentTags as recentTag}
+        <button class="chip border" on:click="{ () => timeSplitStore.newSplit(recentTag) }">{recentTag}</button>
+        {/each}
+    </div>
 </div>

@@ -16,7 +16,7 @@ let tick = 0;
 
 $: daySummary = summarize(group.splits, tick);
 
-let refreshTimeoutHandle: NodeJS.Timeout | null = null;
+let refreshTimeoutHandle: number | null = null;
 
 interface DaySummary {
     totalDuration: Duration;
