@@ -10,6 +10,7 @@ import type { SplitGroup } from "./model/split-group";
 import type { Timesplit } from "./model/timesplit";
 import { getTimeSplitStore } from "./service/service-manager";
 import Clock from "./components/Clock.svelte";
+    import Preferences from "./components/Preferences.svelte";
 
 const splits = getTimeSplitStore().getSplits();
 const groupedSplits = derived(splits, groupSplitsByDay);
@@ -89,6 +90,7 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 			<Clock></Clock>
 		</div>
 	</div>
+	<Preferences></Preferences>
 	<h1>Timesplit</h1>
 	<Splitter></Splitter>
 	<RecentTags></RecentTags>
