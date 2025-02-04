@@ -3,16 +3,13 @@
     import { padStart } from "../util/format";
 
     let time = new Date();
-    let timeoutHandle = null;
+    let timeoutHandle: NodeJS.Timeout | null = null;
 
     $: hour = padStart(time.getHours(), 2);
     $: minute = padStart(time.getMinutes(), 2);
     $: second = padStart(time.getSeconds(), 2);
 
-    onMount(() => {
-        refresh();
-        return () => stopTimeout();
-    });
+    refresh();
 
     function refresh() {
         time = new Date();
