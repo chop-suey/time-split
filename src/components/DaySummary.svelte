@@ -7,15 +7,14 @@ import Tickets from "./Tickets.svelte";
 import WorkingHoursSummary from "./WorkingHoursSummary.svelte";
 import { Duration } from "../model/duration";
 
-export let group: SplitGroup;
+let { group }: { group: SplitGroup } = $props();
+
+let displaySummary = $state(false);
+let tick = $state(0);
+
+const daySummary = $derived(summarize(group.splits, tick));
 
 const preferencesService = getPreferencesService();
-
-let displaySummary = false;
-let tick = 0;
-
-$: daySummary = summarize(group.splits, tick);
-
 let refreshTimeoutHandle: number | null = null;
 
 interface DaySummary {
@@ -168,7 +167,7 @@ function toggleSummary(ignored: Event): void {
 
 <div id="day_summary_container">
     <div id="title">        
-        <button on:click="{toggleSummary}">
+        <button onclick="{toggleSummary}">
             {#if displaySummary}
                 <img src="assets/expand_less.svg" alt="Collapse Summary">
                 {:else}
@@ -182,16 +181,18 @@ function toggleSummary(ignored: Event): void {
     <div id="summary">
         <div class="main">
             <table>
-                {#each daySummary.entries as entry}
-                <tr>
-                    <th>{ entry.tag }</th>
-                    <td class:ongoing="{ entry.ongoing }">{entry.duration}</td>
-                </tr>
-                {/each}
-                <tr id="total">
-                    <th>Working hours</th>
-                    <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalDuration}</td>
-                </tr>
+                <tbody>
+                    {#each daySummary.entries as entry}
+                    <tr>
+                        <th>{ entry.tag }</th>
+                        <td class:ongoing="{ entry.ongoing }">{entry.duration}</td>
+                    </tr>
+                    {/each}
+                    <tr id="total">
+                        <th>Working hours</th>
+                        <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalDuration}</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <div class="main">

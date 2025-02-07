@@ -2,14 +2,17 @@
     import { onMount } from "svelte";
     import { padStart } from "../util/format";
 
-    let time = new Date();
-    let timeoutHandle: NodeJS.Timeout | null = null;
+    let time = $state(new Date());
+    let timeoutHandle: number | null = null;
 
-    $: hour = padStart(time.getHours(), 2);
-    $: minute = padStart(time.getMinutes(), 2);
-    $: second = padStart(time.getSeconds(), 2);
+    const hour = $derived(padStart(time.getHours(), 2));
+    const minute = $derived(padStart(time.getMinutes(), 2));
+    const second = $derived(padStart(time.getSeconds(), 2));
 
-    refresh();
+    onMount(() => {
+        refresh();
+        return () => stopTimeout();
+    });
 
     function refresh() {
         time = new Date();

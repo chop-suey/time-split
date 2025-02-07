@@ -1,32 +1,57 @@
 <script lang="ts">
-import { derived } from "svelte/store";
-import DaySummary from "./components/DaySummary.svelte";
-import ImportExport from "./components/ImportExport.svelte";
+  import { derived } from "svelte/store";
+  import ImportExport from "./components/ImportExport.svelte";
+  import DaySummary from "./components/DaySummary.svelte";
+  import RecentTags from "./components/RecentTags.svelte";
+  import Splitter from "./components/Splitter.svelte";
+  import TimeSplit from "./components/TimeSplit.svelte";
+  import type { SplitGroup } from "./model/split-group";
+  import type { Timesplit } from "./model/timesplit";
+  import { getTimeSplitStore } from "./service/service-manager";
+  import Clock from "./components/Clock.svelte";
+  
+  const splits = getTimeSplitStore().getSplits();
+  const groupedSplits = derived(splits, groupSplitsByDay);
+  
+  function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
+      const valueIterator = splits.reduce((acc, curr) => {
+          const key = curr.start.getDateText();
+          if (!acc.has(key)) {
+              acc.set(key, []);
+          }
+          acc.get(key)!.push(curr);
+          return acc;
+      }, new Map<string, Timesplit[]>()).values();
+      return [ ...valueIterator ]
+          .map(splits => ({ date: splits[0].start.withTime(0, 0), splits }));
+  }
+  </script>
 
-import RecentTags from "./components/RecentTags.svelte";
-import Splitter from "./components/Splitter.svelte";
-import TimeSplit from "./components/TimeSplit.svelte";
-import type { SplitGroup } from "./model/split-group";
-import type { Timesplit } from "./model/timesplit";
-import { getTimeSplitStore } from "./service/service-manager";
-import Clock from "./components/Clock.svelte";
-
-const splits = getTimeSplitStore().getSplits();
-const groupedSplits = derived(splits, groupSplitsByDay);
-
-function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
-    const valueIterator = splits.reduce((acc, curr) => {
-        const key = curr.start.getDateText();
-        if (!acc.has(key)) {
-            acc.set(key, []);
-        }
-        acc.get(key)!.push(curr);
-        return acc;
-    }, new Map<string, Timesplit[]>()).values();
-    return [ ...valueIterator ]
-        .map(splits => ({ date: splits[0].start.withTime(0, 0), splits }));
-}
-</script>
+<main>
+	<div id="header">
+		<nav>
+			<ul>
+				<li>
+					<ImportExport></ImportExport>
+				</li>
+			</ul>
+		</nav>
+		<div id="clock">
+			<Clock></Clock>
+		</div>
+	</div>
+	<h1>Timesplit</h1>
+	<Splitter></Splitter>
+	<RecentTags></RecentTags>
+	{#each $groupedSplits as group}
+	<DaySummary group={group}></DaySummary>
+	<ul class="day-splits">
+		{#each group.splits as split}
+		<li><TimeSplit split={split}></TimeSplit></li>
+		{/each}
+	</ul>
+	{/each}
+</main>
 
 <style>
 	main {
@@ -75,29 +100,3 @@ function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
 		padding: 0.2em;
 	}
 </style>
-
-<main>
-	<div id="header">
-		<nav>
-			<ul>
-				<li>
-					<ImportExport></ImportExport>
-				</li>
-			</ul>
-		</nav>
-		<div id="clock">
-			<Clock></Clock>
-		</div>
-	</div>
-	<h1>Timesplit</h1>
-	<Splitter></Splitter>
-	<RecentTags></RecentTags>
-	{#each $groupedSplits as group}
-	<DaySummary group={group}></DaySummary>
-	<ul class="day-splits">
-		{#each group.splits as split}
-		<li><TimeSplit split={split}></TimeSplit></li>
-		{/each}
-	</ul>
-	{/each}
-</main>

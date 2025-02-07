@@ -15,7 +15,7 @@ Run application in developer mode
 npm run dev
 ```
 
-Open `localhost:8080` in your Browser
+Open `localhost:5173` in your Browser
 
 ## Deployment
 
@@ -23,4 +23,4 @@ Open `localhost:8080` in your Browser
 npm run build
 ```
 
-After building upload the *contents* of `public/` to the server.
+After building upload the *contents* of `dist/` to the server.

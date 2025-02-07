@@ -1,14 +1,17 @@
 import { derived, writable } from "svelte/store";
-import type { Readable } from "svelte/store";
+import type { Readable, Writable } from "svelte/store";
 import { Datetime } from "../model/datetime";
 import type { Timesplit } from "../model/timesplit";
 import type { TimeSplitService } from "./time-split-service";
 
 export class TimeSplitStore {
+    private readonly splitsService: TimeSplitService;
+    private readonly splitsStore: Writable<Timesplit[]>;
 
-    private readonly splitsStore = writable(this.splitsService.getAll());
-
-    constructor(private splitsService: TimeSplitService) {}
+    constructor(splitsService: TimeSplitService) {
+        this.splitsService = splitsService;
+        this.splitsStore = writable(this.splitsService.getAll());
+    }
 
     newSplit(tag: string): void {
         this.splitsService.newSplit(new Datetime(), tag);
