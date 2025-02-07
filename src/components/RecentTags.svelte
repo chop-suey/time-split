@@ -7,7 +7,7 @@ interface Tag {
     nonWorkTag: boolean;
 }
 
-let displayedTags: Tag[] = [];
+let displayedTags: Tag[] = $state([]);
 
 const timeSplitStore = getTimeSplitStore();
 const preferencesService = getPreferencesService();
@@ -60,7 +60,7 @@ timeSplitStore.getRecentTags(numberOfDisplayedTags).subscribe((tags: string[]) =
 <div class="main">
     <div id="tagcontainer" class="box">
         {#each displayedTags as tag}
-        <button class="chip border" on:click="{ () => timeSplitStore.newSplit(tag.label) }">
+        <button class="chip border" onclick="{ () => timeSplitStore.newSplit(tag.label) }">
             {#if tag.pinned}
                 <img src="assets/pin.svg" alt="pinned">
             {/if}

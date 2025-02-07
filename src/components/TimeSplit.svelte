@@ -6,21 +6,21 @@
     import { getTimeSplitStore } from "../service/service-manager";
     import type { Duration } from "../model/duration";
 
+    
+    let { split }: { split: Timesplit } = $props();
+    
+    let editMode = $state(false);
+    let editedTime: string = $state("");
+    let editedTag: string = $state("");
+    
+    let tick = $state(0);
+    
+    const timeText = $derived(split.start.getTimeText());
+    const duration = $derived(split.getDuration());
+    const durationOngoing = $derived(getDurationOngoing(split, tick));
+    
     const timeSplitStore = getTimeSplitStore();
-
-    export let split: Timesplit;
-
-    let editMode = false;
-    let editedTime: string;
-    let editedTag: string;
-
-    let tick = 0;
-    let refreshTimeoutHandle: NodeJS.Timeout | null = null;
-
-    $: timeText = split.start.getTimeText();
-
-    $: duration = split.getDuration();
-    $: durationOngoing = getDurationOngoing(split, tick);
+    let refreshTimeoutHandle: number | null = null;
 
     onMount(() => () => stopTimeout());
 
@@ -80,7 +80,7 @@
     
     <div id="time">
         {#if editMode}
-        <form on:submit="{saveSplit}">
+        <form onsubmit="{saveSplit}">
             <input class="item sh border" type="text" pattern="{LocalTime.pattern}" bind:value="{editedTime}">
         </form>
         {:else}
@@ -92,7 +92,7 @@
 
     <div class="expand">
         {#if editMode}
-        <form on:submit="{saveSplit}">
+        <form onsubmit="{saveSplit}">
             <input class="item sh border" type="text" bind:value="{editedTag}">
         </form>
         {:else}
@@ -109,10 +109,10 @@
 
     <div class="box">
         {#if editMode}
-            <button class="sh sw border" on:click="{saveSplit}"><img src="assets/save.svg" alt="Save"></button>
+            <button class="sh sw border" onclick="{saveSplit}"><img src="assets/save.svg" alt="Save"></button>
         {:else}
-            <button class="sh sw border" on:click="{editSplit}"><img src="assets/edit.svg" alt="Edit"></button>
-            <button class="sh sw border" on:click="{deleteSplit}"><img src="assets/delete.svg" alt="Delete"></button>
+            <button class="sh sw border" onclick="{editSplit}"><img src="assets/edit.svg" alt="Edit"></button>
+            <button class="sh sw border" onclick="{deleteSplit}"><img src="assets/delete.svg" alt="Delete"></button>
         {/if}
     </div>
 </div>

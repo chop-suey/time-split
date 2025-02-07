@@ -3,13 +3,13 @@
     import type { Timesplit } from "../model/timesplit";
     import { getPreferencesService } from "../service/service-manager";
 
-    export let splits: Timesplit[];
+    let { splits }: { splits: Timesplit[] } = $props();
+    const tickets = $derived(conflateTickets(extractTickets(splits)));
 
     const preferencesService = getPreferencesService();
 
     let ticketBaseUrl = preferencesService.getTicketBaseUrl();
 
-    $: tickets = conflateTickets(extractTickets(splits));
 
     function extractTickets(splits: Timesplit[]): Ticket[] {
         return splits.flatMap((split) => {
@@ -43,7 +43,6 @@
             ticketDurations.set(reference, cumulatedDuration);
             return ticketDurations;
         }, new Map<string, Duration>());
-        console.log(conflatedTickets);
         return [...conflatedTickets.entries()].map(([reference, duration]) => ({
             reference,
             duration,
@@ -60,20 +59,20 @@
     <h1>Tickets</h1>
     <p>Splits that have not yet ended are not included.</p>
     <table>
-        {#each tickets as ticket}
+        <tbody>            
+            {#each tickets as ticket}
             <tr>
                 <th>
                     {#if ticketBaseUrl !== null}
-                        <a href="{ticketBaseUrl}{ticket.reference}"
-                            >{ticket.reference}</a
-                        >
+                        <a href="{ticketBaseUrl}{ticket.reference}" target="_blank">{ticket.reference}</a>
                     {:else}
                         {ticket.reference}
                     {/if}
                 </th>
                 <td>{ticket.duration}</td>
             </tr>
-        {/each}
+            {/each}
+        </tbody>
     </table>
 </div>
 

@@ -37,4 +37,4 @@
     }
 </style>
 
-<button on:click="{exportSplits}"><img src="assets/save.svg" title="Export" alt="Export"></button>
+<button onclick="{exportSplits}"><img src="assets/save.svg" title="Export" alt="Export"></button>

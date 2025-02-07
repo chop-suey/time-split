@@ -3,11 +3,11 @@ import type { Timesplit } from "../model/timesplit";
 import { getPreferencesService } from "../service/service-manager";
 import { extractWorkingHours } from "../util/working-hours";
 
-    export let splits: Timesplit[];
+    let { splits }: { splits: Timesplit[] } = $props();
 
     const preferencesService = getPreferencesService();
 
-    $: workingHours = extractWorkingHours(splits, preferencesService.getNonWorkTags());
+    const workingHours = $derived(extractWorkingHours(splits, preferencesService.getNonWorkTags()));
 
     function copySummary(event: Event) {
         event.preventDefault();
@@ -19,7 +19,7 @@ import { extractWorkingHours } from "../util/working-hours";
     }
 </script>
 
-<form class="main box" on:submit="{copySummary}">
+<form class="main box" onsubmit="{copySummary}">
     <input class="item sh border" type="text" readonly value="{ workingHours }" disabled>
     <button class="sh sw border" type="submit"><img src="assets/copy.svg" alt="Copy"></button>
 </form>
