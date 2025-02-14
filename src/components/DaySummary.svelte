@@ -4,8 +4,9 @@ import type { SplitGroup } from "../model/split-group";
 import type { Timesplit } from "../model/timesplit";
 import { getPreferencesService } from "../service/service-manager";
 import Tickets from "./Tickets.svelte";
-import WorkingHoursSummary from "./WorkingHoursSummary.svelte";
 import { Duration } from "../model/duration";
+import type { TagSummary, Summary } from "../model/day-summary";
+import DaySummaryEntries from "./TagSummary.svelte";
 
 let { group }: { group: SplitGroup } = $props();
 
@@ -16,18 +17,6 @@ const daySummary = $derived(summarize(group.splits, tick));
 
 const preferencesService = getPreferencesService();
 let refreshTimeoutHandle: number | null = null;
-
-interface DaySummary {
-    totalDuration: Duration;
-    ongoing: boolean;
-    entries: Summary[];
-}
-
-interface Summary {
-    tag: string;
-    duration: Duration;
-    ongoing: boolean;
-}
 
 onMount(() => () => stopTimeout());
 
@@ -44,7 +33,7 @@ function scheduleRefresh() {
     refreshTimeoutHandle = setTimeout(() => tick = tick + 1, timeout);
 }
 
-function summarize(splits: Timesplit[], _: number): DaySummary {
+function summarize(splits: Timesplit[], _: number): TagSummary {
     const entries = splits
         .reduce(addToSummary, [])
         .sort((a, b) => a.tag.localeCompare(b.tag));
@@ -88,11 +77,12 @@ function toggleSummary(ignored: Event): void {
     #day_summary_container {
         margin: 0.4em auto;
         padding: 0;
-        background-color: #DDDDDF;
+        background-color: #EEEEEF;
         border-bottom: 1px solid #DDDDDF;
     }
 
     #title {
+        background-color: #DDDDDF;
         position: relative;
     }
 
@@ -128,36 +118,12 @@ function toggleSummary(ignored: Event): void {
     }
 
     #summary {
+        margin: 0.5em auto;
         background-color: #EEEEEF;
-        padding: 0.4em;
 
         display: flex;
         flex-direction: column;
-        align-items: center;
-    }
-
-    table {
-        display: inline;
-        text-align: left;
-    }
-
-    tr#total {
-        border-top: 1px solid #AAA;
-    }
-    
-    th {
-        font-weight: bold;
-        width: 100%;
-    }
-
-    td {
-        width: auto;
-        white-space: nowrap;
-    }
-    
-    th,
-    td {
-        padding: 0.5em 0.4em 0.5em 0;
+        gap: 1.2em
     }
 
     .ongoing {
@@ -178,27 +144,9 @@ function toggleSummary(ignored: Event): void {
         <h1>{ group.date.getDisplayDateText() }</h1>
     </div>
     {#if displaySummary}
-    <div id="summary">
-        <div class="main">
-            <table>
-                <tbody>
-                    {#each daySummary.entries as entry}
-                    <tr>
-                        <th>{ entry.tag }</th>
-                        <td class:ongoing="{ entry.ongoing }">{entry.duration}</td>
-                    </tr>
-                    {/each}
-                    <tr id="total">
-                        <th>Working hours</th>
-                        <td class:ongoing="{ daySummary.ongoing }">{ daySummary.totalDuration}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="main">
-            <Tickets splits={group.splits}></Tickets>
-        </div>
-        <!-- <WorkingHoursSummary splits={group.splits}></WorkingHoursSummary> -->
+    <div id="summary" class="main">
+        <DaySummaryEntries daySummary={ daySummary }></DaySummaryEntries>
+        <Tickets splits={group.splits}></Tickets>
     </div>
     {/if}
 </div>
