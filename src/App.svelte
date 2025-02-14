@@ -47,7 +47,7 @@
 	<DaySummary group={group}></DaySummary>
 	<ul class="day-splits">
 		{#each group.splits as split}
-		<li><TimeSplit split={split}></TimeSplit></li>
+		<li class="main"><TimeSplit split={split}></TimeSplit></li>
 		{/each}
 	</ul>
 	{/each}

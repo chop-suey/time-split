@@ -5,6 +5,7 @@
     import type { Timesplit } from "../model/timesplit";
     import { getTimeSplitStore } from "../service/service-manager";
     import type { Duration } from "../model/duration";
+    import SplitTag from "./SplitTag.svelte";
 
     
     let { split }: { split: Timesplit } = $props();
@@ -76,8 +77,7 @@
     }
 </script>
 
-<div class="main box">
-    
+<div class="box">
     <div id="time">
         {#if editMode}
         <form onsubmit="{saveSplit}">
@@ -90,23 +90,23 @@
         {/if} 
     </div>
 
-    <div class="expand">
+    <div id="tag" class="expand">
         {#if editMode}
         <form onsubmit="{saveSplit}">
             <input class="item sh border" type="text" bind:value="{editedTag}">
         </form>
         {:else}
-            <span>
-                { split.tag }
-            </span>
-            {#if duration.hasDuration()}
-                <span class="duration">({duration})</span>
-            {:else if !!durationOngoing}
-                <span class="duration ongoing">({durationOngoing})</span>
-            {/if}
+        <SplitTag tag={split.tag}></SplitTag>
         {/if} 
     </div>
 
+    {#if !editMode}
+        {#if duration.hasDuration()}
+            <div class="duration">({duration})</div>
+        {:else if !!durationOngoing}
+            <div class="duration ongoing">({durationOngoing})</div>
+        {/if}
+    {/if}
     <div class="box">
         {#if editMode}
             <button class="sh sw border" onclick="{saveSplit}"><img src="assets/save.svg" alt="Save"></button>
@@ -119,11 +119,16 @@
 
 <style>
     #time {
-        width: 60px;
+        width: 45px;
+    }
+
+    #tag {
+        overflow: hidden
     }
 
     .duration {
         float: right;
+        white-space: nowrap;
     }
 
     .duration.ongoing {

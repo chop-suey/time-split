@@ -1,3 +1,5 @@
+import { derived, get, writable } from "svelte/store";
+
 const STORAGE_PREFERENCES_KEY = 'preferences';
 
 const NUMBER_OF_RECENT_TAGS_KEY = `${STORAGE_PREFERENCES_KEY}.numberOfRecentTags`;
@@ -6,6 +8,11 @@ const PINNED_TAGS_KEY = `${STORAGE_PREFERENCES_KEY}.pinnedTags`;
 const TICKET_BASE_URL_KEY = `${STORAGE_PREFERENCES_KEY}.ticketBaseUrl`;
 
 export class PreferencesService {
+    private preferences = writable({
+        nonWorkTags: new Set<string>(this.getArray(NON_WORK_TAGS_KEY))
+    });
+    nonWorkTags = derived(this.preferences, preferences => preferences.nonWorkTags)
+
     getNumberOfDisplayedTags(defaultValue: number): number {
         const storedValue = localStorage.getItem(NUMBER_OF_RECENT_TAGS_KEY);
         if (storedValue !== null) {
@@ -18,7 +25,7 @@ export class PreferencesService {
     }
 
     getNonWorkTags(): Set<string> {
-        return new Set<string>(this.getArray(NON_WORK_TAGS_KEY));
+        return get(this.preferences).nonWorkTags;
     }
 
     getPinnedTags(): Set<string> {
