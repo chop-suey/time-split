@@ -29,7 +29,7 @@ input, button, select, textarea {
 
 /* Elements */
 :root {
-	--box-width: 480px;
+	--box-width: 540px;
 	--standard-size: 40px;
 	--standard-padding: 0.5em;
 }
@@ -38,7 +38,7 @@ input, button, select, textarea {
 	margin: 0 auto;
 	padding: 0.3em 0;
 
-	width: var(--box-width);
+	max-width: var(--box-width);
 }
 
 .box, .box  * {
@@ -54,11 +54,11 @@ input, button, select, textarea {
 
 .box > * {
 	margin: 0 0.2em;
-	flex: 0 1 auto;
+	flex: 0 0 auto;
 }
 
 .box > .expand {
-	flex: 2 1 auto;
+	flex: 1 1 auto;
 }
 
 .box > *:first-child {

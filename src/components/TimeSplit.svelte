@@ -119,7 +119,7 @@
 
 <style>
     #time {
-        width: 45px;
+        width: 60px;
     }
 
     #tag {
