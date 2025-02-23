@@ -8,7 +8,7 @@
 
 <style>
 div {
-    width: 100%;
+    min-width: 0;
     display: flex;
     flex-direction: row;
     gap: 0.2em;
