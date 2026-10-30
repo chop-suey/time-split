@@ -5,10 +5,13 @@
     const nonWorkTags = preferencesService.nonWorkTags;
     const pinnedTags = preferencesService.pinnedTags;
     const ticketBaseUrl = preferencesService.ticketBaseUrl;
+    const ticketMappings = preferencesService.ticketMappings;
     const numberOfRecentTags = preferencesService.numberOfRecentTags;
 
     let newNonWorkTag = $state("");
     let newPinnedTag = $state("");
+    let newTicketProject = $state("");
+    let newTicketPath = $state("");
 
     function addToSet(tags: Set<string>, tag: string): Set<string> {
         const updated = new Set(tags);
@@ -47,6 +50,25 @@
     }
 
     let ticketBaseUrlValue = $state($ticketBaseUrl);
+
+    function addTicketMapping(event: Event): void {
+        event.preventDefault();
+        const project = newTicketProject.trim();
+        const path = newTicketPath.trim();
+        if (project.length === 0 || path.length === 0) {
+            return;
+        }
+        newTicketProject = "";
+        newTicketPath = "";
+        const otherMappings = $ticketMappings
+            .filter(mapping => mapping.project.toLowerCase() !== project.toLowerCase());
+        preferencesService.setTicketMappings([ ...otherMappings, { project, path } ]);
+    }
+
+    function removeTicketMapping(project: string): void {
+        preferencesService.setTicketMappings(
+            $ticketMappings.filter(mapping => mapping.project.toLowerCase() !== project.toLowerCase()));
+    }
 
     function saveNumberOfRecentTags(): void {
         const parsed = parseInt(numberOfDisplayedTagsValue);
@@ -90,6 +112,7 @@
     .chip {
         display: flex;
         flex-direction: row;
+        gap: 0.3em;
         align-items: center;
 
         min-width: 0;
@@ -105,6 +128,35 @@
     .chip:hover {
         background-color: #ccffcc;
         border-color: #88cc88;
+    }
+
+    #ticket-links .box {
+        justify-content: flex-start;
+    }
+
+    #ticket-mapping-form {
+        margin-top: 0.4em;
+    }
+
+    #ticket-mapping-form .box + .box {
+        margin-top: 0.3em;
+    }
+
+    label {
+        width: 6em;
+
+        font-weight: bold;
+    }
+
+    #mappings {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+
+        margin-top: 0.4em;
+    }
+
+    #mappings .project {
+        font-weight: bold;
     }
 </style>
 
@@ -144,12 +196,40 @@
         </div>
         {/if}
     </section>
-    <section>
-        <h2>Ticket base URL</h2>
+    <section id="ticket-links">
+        <h2>Ticket links</h2>
         <div class="box">
-            <input class="item sh border expand" type="text" placeholder="https://tracker.example.com/browse/"
+            <label for="ticket-base-url">Base URL</label>
+            <input id="ticket-base-url" class="item sh border expand" type="text" placeholder="https://ticket.example.com"
                 bind:value="{ticketBaseUrlValue}" onchange="{saveTicketBaseUrl}">
         </div>
+        <form id="ticket-mapping-form" onsubmit="{addTicketMapping}">
+            <div class="box">
+                <label for="ticket-project">Project</label>
+                <input id="ticket-project" class="item sh border expand" type="text" placeholder="proj"
+                    bind:value="{newTicketProject}">
+            </div>
+            <div class="box">
+                <label for="ticket-path">Path</label>
+                <input id="ticket-path" class="item sh border expand" type="text" placeholder="path/to/ticket/"
+                    title="Path before the ticket number; relative to the base URL or a full URL"
+                    bind:value="{newTicketPath}">
+            </div>
+            <div class="box">
+                <button class="sh sw border" type="submit"><img src="assets/add.svg" alt="Add"></button>
+            </div>
+        </form>
+        {#if $ticketMappings.length > 0}
+        <div id="mappings" class="box">
+            {#each $ticketMappings as mapping (mapping.project)}
+            <button class="chip border" title="Remove link for {mapping.project}"
+                onclick="{ () => removeTicketMapping(mapping.project) }">
+                <span class="project">{mapping.project} →</span>
+                <span class="path">{mapping.path}</span>
+            </button>
+            {/each}
+        </div>
+        {/if}
     </section>
     <section>
         <h2>Displayed tags</h2>

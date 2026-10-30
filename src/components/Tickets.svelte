@@ -2,51 +2,50 @@
     import { Duration } from "../model/duration";
     import type { Timesplit } from "../model/timesplit";
     import { getPreferencesService } from "../service/service-manager";
+    import { extractTicketReferences, ticketUrl } from "../util/ticket-link";
 
     let { splits }: { splits: Timesplit[] } = $props();
-    const tickets = $derived(conflateTickets(extractTickets(splits)));
 
     const preferencesService = getPreferencesService();
 
     const ticketBaseUrl = preferencesService.ticketBaseUrl;
+    const ticketMappings = preferencesService.ticketMappings;
 
+    const tickets = $derived(conflateTickets(extractTickets(splits))
+        .map(ticket => ({
+            ...ticket,
+            url: ticketUrl(ticket.reference, $ticketBaseUrl, $ticketMappings),
+        })));
 
     function extractTickets(splits: Timesplit[]): Ticket[] {
         return splits.flatMap((split) => {
-            const ticketRegex = /[A-Z]+-\d+/gi;
-            let references = [...split.tag.matchAll(ticketRegex)].map(
-                (ref) => ref[0],
-            );
+            const references = extractTicketReferences(split.tag);
             if (references.length === 0) {
                 return [];
             }
 
-            let durationMinutes =
-                split.getDuration().minutes / references.length;
-            let duration = new Duration(durationMinutes);
+            let duration = new Duration(split.getDuration().minutes / references.length);
 
-            return references.map((reference) => ({ reference, duration }));
+            return references.map((reference) => ({ reference: reference.reference, duration }));
         });
     }
 
     /**
      * Conflate durations of all tickets with the same reference.
-     * Ticket references are considered case insensitive and mapped
-     * to upper case.
+     * Ticket references are considered case insensitive and
+     * displayed as they were first written.
      */
     function conflateTickets(tickets: Ticket[]): Ticket[] {
         let conflatedTickets = tickets.reduce((ticketDurations, ticket) => {
-            let reference = ticket.reference.toUpperCase();
-            let cumulatedDuration = ticketDurations.has(reference)
-                ? ticketDurations.get(reference)!.plus(ticket.duration)
-                : ticket.duration;
-            ticketDurations.set(reference, cumulatedDuration);
+            let key = ticket.reference.toLowerCase();
+            let existing = ticketDurations.get(key);
+            ticketDurations.set(key, {
+                reference: existing ? existing.reference : ticket.reference,
+                duration: existing ? existing.duration.plus(ticket.duration) : ticket.duration,
+            });
             return ticketDurations;
-        }, new Map<string, Duration>());
-        return [...conflatedTickets.entries()].map(([reference, duration]) => ({
-            reference,
-            duration,
-        }));
+        }, new Map<string, Ticket>());
+        return [...conflatedTickets.values()];
     }
 
     interface Ticket {
@@ -63,8 +62,8 @@
             {#each tickets as ticket}
             <tr>
                 <th>
-                    {#if $ticketBaseUrl !== ""}
-                        <a href="{$ticketBaseUrl}{ticket.reference}" target="_blank">{ticket.reference}</a>
+                    {#if ticket.url !== null}
+                        <a href="{ticket.url}" target="_blank">{ticket.reference}</a>
                     {:else}
                         {ticket.reference}
                     {/if}
