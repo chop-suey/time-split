@@ -9,6 +9,11 @@ export interface TicketMapping {
     path: string;
 }
 
+export interface TagSegment {
+    text: string;
+    url: string | null;
+}
+
 const TICKET_REFERENCE_PATTERN = /([a-zA-Z]+)#(\d+)/g;
 
 export function extractTicketReferences(tag: string): TicketReference[] {
@@ -41,6 +46,23 @@ export function ticketUrl(reference: string, baseUrl: string, mappings: TicketMa
         prefix = joinUrl(base, mapping.path);
     }
     return `${prefix}${ticketReference.number}`;
+}
+
+export function splitTag(tag: string, baseUrl: string, mappings: TicketMapping[]): TagSegment[] {
+    const segments: TagSegment[] = [];
+    let lastIndex = 0;
+    for (const match of tag.matchAll(TICKET_REFERENCE_PATTERN)) {
+        const index = match.index;
+        if (index > lastIndex) {
+            segments.push({ text: tag.slice(lastIndex, index), url: null });
+        }
+        segments.push({ text: match[0], url: ticketUrl(match[0], baseUrl, mappings) });
+        lastIndex = index + match[0].length;
+    }
+    if (lastIndex < tag.length) {
+        segments.push({ text: tag.slice(lastIndex), url: null });
+    }
+    return segments;
 }
 
 function joinUrl(base: string, path: string): string {

@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { extractTicketReferences, ticketUrl } from "./ticket-link";
+import { extractTicketReferences, splitTag, ticketUrl } from "./ticket-link";
 import type { TicketMapping } from "./ticket-link";
 
 const MAPPINGS: TicketMapping[] = [
@@ -59,4 +59,44 @@ test("ticketUrl() should return null for relative paths without base url", () =>
 
 test("ticketUrl() should return null for references without number", () => {
     expect(ticketUrl("proj", "https://ticket.com", MAPPINGS)).toBeNull();
+});
+
+test("splitTag() should return a single plain segment for tags without references", () => {
+    expect(splitTag("Heavy work", "https://ticket.com", MAPPINGS)).toEqual([
+        { text: "Heavy work", url: null },
+    ]);
+});
+
+test("splitTag() should return a single link segment when the tag is a reference", () => {
+    expect(splitTag("proj#4", "https://ticket.com", MAPPINGS)).toEqual([
+        { text: "proj#4", url: "https://ticket.com/foo/bar/baz/-/4" },
+    ]);
+});
+
+test("splitTag() should separate surrounding text and references", () => {
+    expect(splitTag("fix proj#4 today", "https://ticket.com", MAPPINGS)).toEqual([
+        { text: "fix ", url: null },
+        { text: "proj#4", url: "https://ticket.com/foo/bar/baz/-/4" },
+        { text: " today", url: null },
+    ]);
+});
+
+test("splitTag() should separate multiple references", () => {
+    expect(splitTag("proj#4 + other#47", "https://ticket.com", MAPPINGS)).toEqual([
+        { text: "proj#4", url: "https://ticket.com/foo/bar/baz/-/4" },
+        { text: " + ", url: null },
+        { text: "other#47", url: "https://ticket.com/foo/foo/foo/-/47" },
+    ]);
+});
+
+test("splitTag() should keep unmapped references plain", () => {
+    expect(splitTag("unknown#1", "https://ticket.com", MAPPINGS)).toEqual([
+        { text: "unknown#1", url: null },
+    ]);
+});
+
+test("splitTag() should keep references plain without base url", () => {
+    expect(splitTag("proj#4", "", MAPPINGS)).toEqual([
+        { text: "proj#4", url: null },
+    ]);
 });
