@@ -7,29 +7,27 @@ interface Tag {
     pinned: boolean;
 }
 
-let displayedTags: Tag[] = $state([]);
-
 const timeSplitStore = getTimeSplitStore();
 const preferencesService = getPreferencesService();
 
-const numberOfDisplayedTags = preferencesService.getNumberOfDisplayedTags(10);
+const recentTags = timeSplitStore.getRecentTags();
+const pinnedTags = preferencesService.pinnedTags;
+const numberOfDisplayedTags = preferencesService.numberOfRecentTags;
 
-timeSplitStore.getRecentTags(numberOfDisplayedTags).subscribe((tags: string[]) => {
-        const pinnedTags = preferencesService.getPinnedTags();
-        const recentTags = tags
-            .filter(tag => !pinnedTags.has(tag))
-            .map(label => ({ 
-                label,
-                pinned: false,
-            }));
-        displayedTags = [ ...pinnedTags ]
+const displayedTags = $derived(
+    [ ...$pinnedTags ]
+        .map(label => ({
+            label,
+            pinned: true,
+        }))
+        .concat($recentTags
+            .filter(tag => !$pinnedTags.has(tag))
             .map(label => ({
                 label,
-                pinned: true,
-            }))
-            .concat(recentTags)
-            .slice(0, numberOfDisplayedTags);
-    });
+                pinned: false,
+            })))
+        .slice(0, $numberOfDisplayedTags)
+);
 </script>
 
 <style>

@@ -8,7 +8,7 @@
 
     const preferencesService = getPreferencesService();
 
-    let ticketBaseUrl = preferencesService.getTicketBaseUrl();
+    const ticketBaseUrl = preferencesService.ticketBaseUrl;
 
 
     function extractTickets(splits: Timesplit[]): Ticket[] {
@@ -63,8 +63,8 @@
             {#each tickets as ticket}
             <tr>
                 <th>
-                    {#if ticketBaseUrl !== null}
-                        <a href="{ticketBaseUrl}{ticket.reference}" target="_blank">{ticket.reference}</a>
+                    {#if $ticketBaseUrl !== ""}
+                        <a href="{$ticketBaseUrl}{ticket.reference}" target="_blank">{ticket.reference}</a>
                     {:else}
                         {ticket.reference}
                     {/if}

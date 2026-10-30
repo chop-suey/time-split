@@ -1,6 +1,7 @@
 <script lang="ts">
   import { derived } from "svelte/store";
   import ImportExport from "./components/ImportExport.svelte";
+  import Settings from "./components/Settings.svelte";
   import DaySummary from "./components/DaySummary.svelte";
   import RecentTags from "./components/RecentTags.svelte";
   import Splitter from "./components/Splitter.svelte";
@@ -12,6 +13,8 @@
   
   const splits = getTimeSplitStore().getSplits();
   const groupedSplits = derived(splits, groupSplitsByDay);
+
+  let showSettings = $state(false);
   
   function groupSplitsByDay(splits: Timesplit[]): SplitGroup[] {
       const valueIterator = splits.reduce((acc, curr) => {
@@ -32,6 +35,11 @@
 		<nav>
 			<ul>
 				<li>
+					<button title="Settings" aria-pressed="{showSettings}" onclick="{ () => showSettings = !showSettings }">
+						<img src="assets/settings.svg" alt="Settings">
+					</button>
+				</li>
+				<li>
 					<ImportExport></ImportExport>
 				</li>
 			</ul>
@@ -40,6 +48,9 @@
 			<Clock></Clock>
 		</div>
 	</div>
+	{#if showSettings}
+	<Settings></Settings>
+	{/if}
 	<h1>Timesplit</h1>
 	<Splitter></Splitter>
 	<RecentTags></RecentTags>

@@ -7,7 +7,9 @@ import { extractWorkingHours } from "../util/working-hours";
 
     const preferencesService = getPreferencesService();
 
-    const workingHours = $derived(extractWorkingHours(splits, preferencesService.getNonWorkTags()));
+    const nonWorkTags = preferencesService.nonWorkTags;
+
+    const workingHours = $derived(extractWorkingHours(splits, $nonWorkTags));
 
     function copySummary(event: Event) {
         event.preventDefault();

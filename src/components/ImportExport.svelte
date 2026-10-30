@@ -30,11 +30,4 @@
     }
 </script>
 
-<style>
-    button {
-        border: 0;
-        background: none;
-    }
-</style>
-
 <button onclick="{exportSplits}"><img src="assets/save.svg" title="Export" alt="Export"></button>

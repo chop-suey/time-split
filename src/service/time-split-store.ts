@@ -32,7 +32,7 @@ export class TimeSplitStore {
         return this.splitsStore;
     }
 
-    getRecentTags(n: number): Readable<string[]> {
+    getRecentTags(n?: number): Readable<string[]> {
         return derived(this.splitsStore, splits => this.getRecentTagsFromSplits(splits, n));
     }
 
@@ -40,7 +40,7 @@ export class TimeSplitStore {
         this.splitsStore.set(this.splitsService.getAll());
     }
 
-    private getRecentTagsFromSplits(splits: Timesplit[], n: number): string[] {
+    private getRecentTagsFromSplits(splits: Timesplit[], n?: number): string[] {
         return splits
             .map(split => split.tag)
             .reduce((tags, curr) => tags.includes(curr) ? tags : [ ...tags, curr ], [] as string[])
