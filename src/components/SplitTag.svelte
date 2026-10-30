@@ -1,9 +1,17 @@
 <script lang="ts">
     import { getPreferencesService } from "../service/service-manager";
+    import { splitTag } from "../util/ticket-link";
 
-    let { tag }: { tag: string } = $props();
+    let { tag, linkTickets = false }: { tag: string; linkTickets?: boolean } = $props();
 
-    const nonWorkTags = getPreferencesService().nonWorkTags;
+    const preferencesService = getPreferencesService();
+    const nonWorkTags = preferencesService.nonWorkTags;
+    const ticketBaseUrl = preferencesService.ticketBaseUrl;
+    const ticketMappings = preferencesService.ticketMappings;
+
+    const segments = $derived(linkTickets
+        ? splitTag(tag, $ticketBaseUrl, $ticketMappings)
+        : []);
 </script>
 
 <style>
@@ -30,5 +38,17 @@ div > span {
     {#if $nonWorkTags.has(tag) }
     <img src="assets/pause.svg" alt="non work tag">
     {/if}
-    <span title="{ tag }">{ tag }</span>
+    <span title="{ tag }">
+        {#if linkTickets}
+        {#each segments as segment, index (index)}
+            {#if segment.url !== null}
+            <a href="{segment.url}" target="_blank">{segment.text}</a>
+            {:else}
+            {segment.text}
+            {/if}
+        {/each}
+        {:else}
+        { tag }
+        {/if}
+    </span>
 </div>

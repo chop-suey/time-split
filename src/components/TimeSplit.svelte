@@ -96,7 +96,7 @@
             <input class="item sh border" type="text" bind:value="{editedTag}">
         </form>
         {:else}
-        <SplitTag tag={split.tag}></SplitTag>
+        <SplitTag tag={split.tag} linkTickets></SplitTag>
         {/if} 
     </div>
 
