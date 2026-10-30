@@ -13,9 +13,10 @@ let { group }: { group: SplitGroup } = $props();
 let displaySummary = $state(false);
 let tick = $state(0);
 
-const daySummary = $derived(summarize(group.splits, tick));
+const nonWorkTags = getPreferencesService().nonWorkTags;
 
-const preferencesService = getPreferencesService();
+const daySummary = $derived(summarize(group.splits, $nonWorkTags, tick));
+
 let refreshTimeoutHandle: number | null = null;
 
 onMount(() => () => stopTimeout());
@@ -33,11 +34,10 @@ function scheduleRefresh() {
     refreshTimeoutHandle = setTimeout(() => tick = tick + 1, timeout);
 }
 
-function summarize(splits: Timesplit[], _: number): TagSummary {
+function summarize(splits: Timesplit[], nonWorkTags: Set<string>, _: number): TagSummary {
     const entries = splits
         .reduce(addToSummary, [])
         .sort((a, b) => a.tag.localeCompare(b.tag));
-    const nonWorkTags = preferencesService.getNonWorkTags();
     const workEntries = entries
         .filter(entry => !nonWorkTags.has(entry.tag));
     const totalDuration = workEntries.reduce((sum, curr) => sum.plus(curr.duration), new Duration(0));
