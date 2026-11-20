@@ -7,6 +7,7 @@ import Tickets from "./Tickets.svelte";
 import { Duration } from "../model/duration";
 import type { TagSummary, Summary } from "../model/day-summary";
 import DaySummaryEntries from "./TagSummary.svelte";
+import WorkingHoursSummary from "./WorkingHoursSummary.svelte";
 
 let { group }: { group: SplitGroup } = $props();
 
@@ -145,8 +146,9 @@ function toggleSummary(ignored: Event): void {
     </div>
     {#if displaySummary}
     <div id="summary" class="main">
-        <DaySummaryEntries daySummary={ daySummary }></DaySummaryEntries>
         <Tickets splits={group.splits}></Tickets>
+        <WorkingHoursSummary splits={group.splits}></WorkingHoursSummary>
+        <DaySummaryEntries daySummary={ daySummary }></DaySummaryEntries>
     </div>
     {/if}
 </div>

@@ -9,19 +9,30 @@ import { extractWorkingHours } from "../util/working-hours";
 
     const nonWorkTags = preferencesService.nonWorkTags;
 
-    const workingHours = $derived(extractWorkingHours(splits, $nonWorkTags));
-
-    function copySummary(event: Event) {
-        event.preventDefault();
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(workingHours);
-        } else {
-            console.error('Cannot copy text (not supported by browser)');
-        }
-    }
+    const workingHours = $derived(
+        extractWorkingHours(splits, $nonWorkTags)
+            .map(block => block.join(" – "))
+    );
 </script>
 
-<form class="main box" onsubmit="{copySummary}">
-    <input class="item sh border" type="text" readonly value="{ workingHours }" disabled>
-    <button class="sh sw border" type="submit"><img src="assets/copy.svg" alt="Copy"></button>
-</form>
+<style>
+    h1 {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin: 0.2em 0 0.4em 0;
+    }
+
+    .work-block {
+        display: block;
+        line-height: 1.2;
+    }
+</style>
+
+{#if workingHours.length > 0}
+<div>
+    <h1>Working hours</h1>
+    {#each workingHours as block}
+    <span class="work-block">{block}</span>
+    {/each}
+</div>
+{/if}

@@ -1,7 +1,7 @@
 import type { Datetime } from "../model/datetime";
 import type { Timesplit } from "../model/timesplit";
 
-export function extractWorkingHours(splits: Timesplit[] | null | undefined, nonWorkTags: Set<string>): string {
+export function extractWorkingHours(splits: Timesplit[] | null | undefined, nonWorkTags: Set<string>): string[][] {
 
     return (splits ?? [])
         .sort((a, b) => a.start.toTime() - b.start.toTime())
@@ -18,13 +18,11 @@ export function extractWorkingHours(splits: Timesplit[] | null | undefined, nonW
                 : [ ...acc.slice(0, acc.length - 1), previousSplit.withEnd(split.start), split ];
         }, [])
         .filter(split => !nonWorkTags.has(split.tag))
-        .flatMap(split => {
-            return split.start.getDateText() === split.end?.getDateText() 
-                ? [ split.start, split.end ]
-                : [ split.start ];
-        })
-        .map(time => time.getTimeText())
-        .join('-');
+        .map(split => {
+            return split.start.isSameDay(split.end)
+                ? [ split.start.getTimeText(), split.end!.getTimeText()]
+                : [ split.start.getTimeText() ];
+        });
 }
 
 function getEndForSameDay(start: Datetime, end?: Datetime): Datetime | null {
