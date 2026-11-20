@@ -14,7 +14,7 @@ export function extractWorkingHours(splits: Timesplit[] | null | undefined, nonW
             const isCurrentWork = !nonWorkTags.has(split.tag)
 
             return isPreviousWork === isCurrentWork
-                ? [ ...acc.slice(0, acc.length - 1), previousSplit.withEnd(getEndForSameDay(split.start, split.end) ?? split.start) ]
+                ? [ ...acc.slice(0, acc.length - 1), previousSplit.withEnd(getEndForSameDay(split.start, split.end)) ]
                 : [ ...acc.slice(0, acc.length - 1), previousSplit.withEnd(split.start), split ];
         }, [])
         .filter(split => !nonWorkTags.has(split.tag))
@@ -25,6 +25,6 @@ export function extractWorkingHours(splits: Timesplit[] | null | undefined, nonW
         });
 }
 
-function getEndForSameDay(start: Datetime, end?: Datetime): Datetime | null {
-    return start.getDateText() === end?.getDateText() ? end : null;
+function getEndForSameDay(start: Datetime, end?: Datetime): Datetime | undefined {
+    return start.getDateText() === end?.getDateText() ? end : undefined;
 }
