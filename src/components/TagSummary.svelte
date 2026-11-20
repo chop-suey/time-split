@@ -6,7 +6,7 @@ let { daySummary }: { daySummary: TagSummary } = $props();
 </script>
 
 <style>
-h1 {
+details > summary {
     font-weight: bold;
     font-size: 1.2em;
     margin: 0.2em 0 0.4em 0
@@ -42,8 +42,8 @@ td {
 }
 </style>
 
-<div>
-    <h1>Summary</h1>
+<details>
+    <summary>Tag summary</summary>
     <table>
         <tbody>
             {#each daySummary.entries as entry}
@@ -58,4 +58,4 @@ td {
             </tr>
         </tbody>
     </table>
-</div>
+</details>

@@ -54,8 +54,8 @@
     }
 </script>
 
-<div id="tickets">
-    <h1>Tickets</h1>
+<details open>
+    <summary>Tickets</summary>
     <p>Splits that have not yet ended are not included.</p>
     <table>
         <tbody>            
@@ -73,7 +73,7 @@
             {/each}
         </tbody>
     </table>
-</div>
+</details>
 
 <style>
     table {
@@ -96,7 +96,7 @@
         padding: 0.5em 0.4em 0.5em 0;
     }
 
-    h1 {
+    details > summary {
         font-weight: bold;
         font-size: 1.2em;
         margin: 0.2em 0 0.4em 0
