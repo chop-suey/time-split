@@ -3,7 +3,7 @@ import type { Timesplit } from "../model/timesplit";
 
 export function extractWorkingHours(splits: Timesplit[] | null | undefined, nonWorkTags: Set<string>): string[][] {
 
-    return (splits ?? [])
+    return ([ ...splits ?? []])
         .sort((a, b) => a.start.toTime() - b.start.toTime())
         .reduce((acc: Timesplit[], split, index, arr: Timesplit[]) => {
             if (index < 1) {

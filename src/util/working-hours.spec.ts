@@ -87,3 +87,10 @@ test('extractWorkingHours() should ignore end time if it is not the same day', (
     expect(extractWorkingHours([split], NON_WORK_TAGS)).toEqual([['16:00']]);
     expect(extractWorkingHours([WORK_10_0, split], NON_WORK_TAGS)).toEqual([['10:00', '16:00']]);
 });
+
+test('extractWorkingHours() must not re-order the input array', () => {
+    const splitsExpected = [WORK_13_0, NON_WORK_11_0, WORK_8_0, NON_WORK_17_0, WORK_11_30];
+    const splits = [ ...splitsExpected ];
+    extractWorkingHours(splits, NON_WORK_TAGS)
+    expect(splits).toEqual(splitsExpected);
+});
