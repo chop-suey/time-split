@@ -10,7 +10,6 @@
     
     let { split }: { split: Timesplit } = $props();
     
-    let editMode = $state(false);
     let editedTime: string = $state("");
     let editedTag: string = $state("");
     
@@ -21,7 +20,10 @@
     const durationOngoing = $derived(getDurationOngoing(split, tick));
     
     const timeSplitStore = getTimeSplitStore();
+    const editingSplitId = timeSplitStore.getEditingSplitId();
     let refreshTimeoutHandle: number | null = null;
+
+    const editMode = $derived($editingSplitId === split.id);
 
     onMount(() => () => stopTimeout());
 
@@ -49,6 +51,9 @@
     }
 
     function deleteSplit(ignored: Event): void {
+        if ($editingSplitId != null) {
+            return;
+        }
         let message = `Delete ${split.tag}?`;
         if (confirm(message)) {
             timeSplitStore.deleteSplit(split);
@@ -56,14 +61,16 @@
     }
 
     function editSplit(ignored: Event): void {
+        if ($editingSplitId != null) {
+            return;
+        }
         editedTime = split.start.getTimeText();
         editedTag = split.tag;
-        editMode = true;
+        timeSplitStore.startEditingSplit(split);
     }
 
     function saveSplit(event: Event): void {
         event.preventDefault();
-        editMode = false;
 
         const localTime = LocalTime.parse(editedTime);
 
@@ -73,6 +80,7 @@
                 .withStart(start)
                 .withTag(editedTag);
             timeSplitStore.updateSplit(editedSplit);
+            timeSplitStore.stopEditing();
         }
     }
 </script>
@@ -111,8 +119,8 @@
         {#if editMode}
             <button class="sh sw border" onclick="{saveSplit}"><img src="assets/save.svg" alt="Save"></button>
         {:else}
-            <button class="sh sw border" onclick="{editSplit}"><img src="assets/edit.svg" alt="Edit"></button>
-            <button class="sh sw border" onclick="{deleteSplit}"><img src="assets/delete.svg" alt="Delete"></button>
+            <button class="sh sw border" onclick="{editSplit}" disabled={ $editingSplitId != null }><img src="assets/edit.svg" alt="Edit"></button>
+            <button class="sh sw border" onclick="{deleteSplit}" disabled={ $editingSplitId != null }><img src="assets/delete.svg" alt="Delete"></button>
         {/if}
     </div>
 </div>
